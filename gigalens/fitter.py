@@ -3,7 +3,10 @@ from abc import ABC
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
-from tqdm.auto import trange
+from tqdm.auto import tqdm, trange
+
+def tqdm_progress_bar_fn(num_steps):
+    return iter(tqdm(range(num_steps), desc='', leave=True))
 
 from gigalens.lens_sim import LensSimulator
 from gigalens.model import Model
@@ -115,7 +118,7 @@ class FitterABC(ABC):
 
         return q_z, losses
 
-    def HMC(self, q_z: tfd.Distribution, init_eps=0.3, init_l=3, n_hmc=50, num_burnin_steps=250, num_results=750):
+    def HMC(self, q_z: tfd.Distribution, init_eps=0.3, init_l=3, n_hmc=50, num_burnin_steps=250, num_results=750, max_leapfrog_steps=30):
         """
         (3) Sample from the posterior with HMC
 
@@ -151,7 +154,7 @@ class FitterABC(ABC):
 
             mc_kernel = tfem.GradientBasedTrajectoryLengthAdaptation(mc_kernel,
                                                                      num_adaptation_steps=num_adaptation_steps,
-                                                                     max_leapfrog_steps=30)
+                                                                     max_leapfrog_steps=max_leapfrog_steps)
             mc_kernel = tfp.mcmc.DualAveragingStepSizeAdaptation(inner_kernel=mc_kernel,
                                                                  num_adaptation_steps=num_adaptation_steps)
 

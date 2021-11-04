@@ -36,7 +36,8 @@ setup(
         "cosmohammer >= 0.6.1",
         "schwimmbad >= 0.3.2",
         "dynesty >= 1.1",
-        "corner >= 2.2.1"
+        "corner >= 2.2.1",
+        "mpmath==1.2.1"
     ],
 
     classifiers=[
