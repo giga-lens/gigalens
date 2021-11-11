@@ -9,26 +9,32 @@ from setuptools import setup
 def read(filename):
     filename = os.path.join(os.path.dirname(__file__), filename)
     text_type = type(u"")
-    with io.open(filename, mode="r", encoding='utf-8') as fd:
-        return re.sub(text_type(r':[a-z]+:`~?(.*?)`'), text_type(r'``\1``'), fd.read())
+    with io.open(filename, mode="r", encoding="utf-8") as fd:
+        return re.sub(text_type(r":[a-z]+:`~?(.*?)`"), text_type(r"``\1``"), fd.read())
 
+
+test_deps = [
+    "coverage",
+    "pytest",
+]
+
+extras = {
+    "test": test_deps,
+    "jax": ["jax==0.2.25", "optax==0.0.9", "objax==1.4.0"],
+}
 
 setup(
     name="gigalens",
     version="0.1.0",
     # url="https://github.com/kragniz/cookiecutter-pypackage-minimal",
-    license='MIT',
-
+    license="MIT",
     author="Andi Gu",
     author_email="andi.gu@berkeley.edu",
-
     description="Fast strong gravitational lens modeling",
     long_description=read("README.rst"),
-
-    packages=find_packages(exclude=('tests',)),
-
+    packages=find_packages(exclude=("tests",)),
     install_requires=[
-        "tensorflow==2.6.0",
+        "tensorflow ~= 2.6.0",
         "tensorflow-probability==0.14.1",
         "lenstronomy >= 1.9.1",
         "matplotlib >= 3.2.2",
@@ -37,12 +43,16 @@ setup(
         "schwimmbad >= 0.3.2",
         "dynesty >= 1.1",
         "corner >= 2.2.1",
-        "mpmath==1.2.1"
+        "mpmath==1.2.1",
+        "PyYaml >= 6.0",
+        "numpy==1.19.5",
+        "tqdm~=4.62.0",
     ],
-
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.7',
+        "Development Status :: 2 - Pre-Alpha",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.7",
     ],
+    tests_require=test_deps,
+    extras_require=extras,
 )
