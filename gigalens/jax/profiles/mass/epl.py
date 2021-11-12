@@ -15,7 +15,7 @@ class EPL(gigalens.profile.MassProfile):
         self.niter = niter
 
     @functools.partial(jit, static_argnums=(0,))
-    def deriv(self, x, y, theta_E, gamma, e1, e2, cx, cy):
+    def deriv(self, x, y, theta_E, gamma, e1, e2, center_x, center_y):
         phi = jnp.arctan2(e2, e1) / 2
         c = jnp.clip(jnp.sqrt(e1 ** 2 + e2 ** 2), 0, 1)
         q = (1 - c) / (1 + c)
@@ -23,7 +23,7 @@ class EPL(gigalens.profile.MassProfile):
         b = theta_E_conv * jnp.sqrt((1 + q ** 2) / 2)
         t = gamma - 1
 
-        x, y = x - cx, y - cy
+        x, y = x - center_x, y - center_y
         x, y = self.rotate(x, y, phi)
 
         R = jnp.clip(jnp.sqrt((q * x) ** 2 + y ** 2), 1e-10, 1e10)

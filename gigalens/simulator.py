@@ -102,7 +102,7 @@ class LensSimulatorInterface(ABC):
             "ny": supersample * num_pix,  # number of pixels per axis
             "ra_at_xy_0": ra_at_xy_0,  # RA at pixel (0,0)
             "dec_at_xy_0": dec_at_xy_0,  # DEC at pixel (0,0)
-            "transform_pix2angle": transform_pix2angle.numpy(),
+            "transform_pix2angle": np.array(transform_pix2angle),
         }
         pixel_grid_rot = PixelGrid(**kwargs_pixel_rot)
 

@@ -2,6 +2,9 @@ import functools
 
 import numpy as np
 from jax import numpy as jnp, jit
+from jax import numpy as jnp
+from jax import random
+import jax
 from tensorflow_probability.substrates.jax import distributions as tfd, bijectors as tfb
 
 import gigalens.jax.simulator as sim
@@ -20,7 +23,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
         self.observed_image = jnp.array(observed_image)
         self.background_rms = jnp.float32(background_rms)
         self.exp_time = jnp.float32(exp_time)
-        example = prior.sample(seed=0)
+        example = prior.sample(seed=random.PRNGKey(0))
         self.bij = tfb.Chain(
             [
                 prior.experimental_default_event_space_bijector(),
@@ -30,6 +33,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
 
     @functools.partial(jit, static_argnums=(0,))
     def log_prob(self, simulator: sim.LensSimulator, z):
+        z = list(z)
         x = self.bij.forward(z)
         im_sim = simulator.simulate(x)
         err_map = jnp.sqrt(self.background_rms ** 2 + im_sim / self.exp_time)
@@ -55,7 +59,7 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
         )
         self.observed_image = jnp.array(observed_image)
         self.err_map = jnp.array(err_map)
-        example = prior.sample(seed=0)
+        example = prior.sample(seed=random.PRNGKey(0))
         self.bij = tfb.Chain(
             [
                 prior.experimental_default_event_space_bijector(),
@@ -65,6 +69,7 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
 
     @functools.partial(jit, static_argnums=(0,))
     def log_prob(self, simulator: sim.LensSimulator, z):
+        z = list(z)
         x = self.bij.forward(z)
         im_sim = simulator.lstsq_simulate(x, self.observed_image, self.err_map)
         log_like = self.observed_dist.log_prob(im_sim)
