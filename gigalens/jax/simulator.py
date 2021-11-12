@@ -3,6 +3,7 @@ from typing import List, Dict
 
 import jax
 import jax.numpy as jnp
+import numpy as np
 from jax import jit
 from jax import lax
 from lenstronomy.Util.kernel_util import subgrid_kernel
@@ -30,10 +31,10 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         self.conversion_factor = jnp.linalg.det(self.transform_pix2angle)
         self.transform_pix2angle = self.transform_pix2angle / float(self.supersample)
         _, _, img_X, img_Y = self.get_coords(
-            self.supersample, sim_config.num_pix, self.transform_pix2angle
+            self.supersample, sim_config.num_pix, np.array(self.transform_pix2angle)
         )
-        self.img_X = jnp.repeat(img_X[jnp.newaxis, ...], bs, axis=0)
-        self.img_Y = jnp.repeat(img_Y[jnp.newaxis, ...], bs, axis=0)
+        self.img_X = jnp.repeat(img_X[...,jnp.newaxis], bs, axis=-1)
+        self.img_Y = jnp.repeat(img_Y[...,jnp.newaxis], bs, axis=-1)
 
         self.numPix = sim_config.num_pix
         self.bs = bs
@@ -67,6 +68,7 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             img += lightModel.light(self.img_X, self.img_Y, **p)
         for lightModel, p in zip(self.phys_model.source_light, source_light_params):
             img += lightModel.light(beta_x, beta_y, **p)
+        img = jnp.transpose(img, (2, 0, 1))
         img = jnp.nan_to_num(img)
         ret = (
             lax.conv(img[:, jnp.newaxis, ...], self.flat_kernel, (1, 1), "SAME")
@@ -97,12 +99,13 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         img = jnp.zeros((0, *self.img_X.shape))
         for lightModel, p in zip(self.phys_model.lens_light, lens_light_params):
             img = jnp.concatenate(
-                (img, lightModel.light(self.img_X, self.img_Y, **p)), axis=0
+                (img, lightModel.light(self.img_X, self.img_Y, **p)[jnp.newaxis,...]), axis=0
             )
         for lightModel, p in zip(self.phys_model.source_light, source_light_params):
-            img = jnp.concatenate((img, lightModel.light(beta_x, beta_y, **p)), axis=0)
+            img = jnp.concatenate((img, lightModel.light(beta_x, beta_y, **p)[jnp.newaxis,...]), axis=0)
 
         img = jnp.nan_to_num(img)
+        img = jnp.transpose(img, (0, 3, 1, 2))
         ret = (
             jax.vmap(
                 lambda x: lax.conv(
@@ -121,7 +124,8 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             if self.supersample != 1
             else ret
         )
-        ret = jnp.squeeze(ret, axis=2)
+        if self.flat_kernel is not None:
+            ret = jnp.squeeze(ret, axis=2)
         ret = jnp.transpose(ret, (1, 2, 3, 0))
         if return_stacked:
             return ret

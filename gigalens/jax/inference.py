@@ -22,7 +22,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
     def MAP(
         self,
         optimizer: optax.GradientTransformation,
-        start,
+        start=None,
         n_samples=500,
         num_steps=350,
         seed=0,
@@ -35,38 +35,35 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             bs=n_samples // dev_cnt,
         )
         seed = jax.random.PRNGKey(seed)
+        
+        start = self.prob_model.prior.sample(n_samples, seed=seed) if start is None else start
+        params = jnp.stack(self.prob_model.bij.inverse(start))
 
-        params = self.prob_model.bij.inverse(
-            self.prob_model.prior.sample(n_samples, seed=seed)
-            if start is None
-            else start
-        )
         opt_state = optimizer.init(params)
+        
+        def loss(z):
+            lp, chisq = self.prob_model.log_prob(lens_sim, z)
+            return -jnp.mean(lp)/jnp.size(self.prob_model.observed_image), chisq
 
-        loss_and_grad = jax.pmap(
-            jax.value_and_grad(
-                lambda z: self.prob_model.log_prob(lens_sim, z), has_aux=True
-            )
-        )
+        loss_and_grad = jax.pmap(jax.value_and_grad(loss, has_aux=True))
 
         def update(params, opt_state):
-            splt_params = jnp.array(jnp.split(params, 4))
-
+            splt_params = jnp.array(jnp.split(params, 4, axis=1))
             (_, chisq), grads = loss_and_grad(splt_params)
-
-            grads = jnp.concatenate(grads, axis=0)
-            chisq = jnp.concatenate(chisq, axis=0)
-
+            grads = jnp.concatenate(grads, axis=-1)
+            chisq = jnp.concatenate(chisq, axis=-1)
+            
             updates, opt_state = optimizer.update(grads, opt_state)
             new_params = optax.apply_updates(params, updates)
             return chisq, new_params, opt_state
 
         with trange(num_steps) as pbar:
-            for _ in pbar:
+            for step in pbar:
                 loss, params, opt_state = update(params, opt_state)
-                pbar.set_description(
-                    f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True).to_py()):.3f}"
-                )
+                if step % 20 == 0:
+                    pbar.set_description(
+                        f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True).to_py()):.3f}"
+                    )
         return params
 
     def SVI(
