@@ -26,6 +26,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
             ]
         )
 
+    @tf.function
     def log_prob(self, simulator: gigalens.tf.simulator.LensSimulator, z):
         x = self.bij.forward(z)
         im_sim = simulator.simulate(x)
@@ -60,6 +61,7 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
             ]
         )
 
+    @tf.function
     def log_prob(self, simulator: gigalens.tf.simulator.LensSimulator, z):
         x = self.bij.forward(z)
         im_sim = simulator.lstsq_simulate(x, self.observed_image, self.err_map)

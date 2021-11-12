@@ -1,5 +1,7 @@
+import functools
+
 import numpy as np
-from jax import numpy as jnp
+from jax import numpy as jnp, jit
 from tensorflow_probability.substrates.jax import distributions as tfd, bijectors as tfb
 
 import gigalens.jax.simulator as sim
@@ -26,6 +28,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
             ]
         )
 
+    @functools.partial(jit, static_argnums=(0,))
     def log_prob(self, simulator: sim.LensSimulator, z):
         x = self.bij.forward(z)
         im_sim = simulator.simulate(x)
@@ -60,6 +63,7 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
             ]
         )
 
+    @functools.partial(jit, static_argnums=(0,))
     def log_prob(self, simulator: sim.LensSimulator, z):
         x = self.bij.forward(z)
         im_sim = simulator.lstsq_simulate(x, self.observed_image, self.err_map)

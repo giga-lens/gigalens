@@ -21,23 +21,23 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         lens_sim = gigalens.tf.simulator.LensSimulator(
             self.phys_model, self.sim_config, bs=n_samples
         )
+        observed_image_size = tf.constant(
+            tf.size(self.prob_model.observed_image, out_type=tf.float32)
+        )
 
         @tf.function
         def train_step():
             with tf.GradientTape() as tape:
                 log_prob, square_err = self.prob_model.log_prob(lens_sim, trial)
-                loss = -log_prob
-                agg_loss = tf.reduce_mean(loss)
+                agg_loss = tf.reduce_mean(-log_prob / observed_image_size)
             gradients = tape.gradient(agg_loss, trial)
             optimizer.apply_gradients(zip(gradients, trial))
-            return loss, square_err
+            return square_err
 
         with trange(num_steps) as pbar:
             for _ in pbar:
-                loss, square_err = train_step()
-                pbar.set_description(
-                    f"Chi Squared: {(square_err[np.nanargmin(loss)]):.4f}"
-                )
+                square_err = train_step()
+                pbar.set_description(f"Chi Squared: {(np.nanmin(square_err)):.4f}")
         return trial
 
     def SVI(self, optimizer, start, n_vi=250, num_steps=500, seed=0):

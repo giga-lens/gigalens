@@ -108,15 +108,26 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         img = tf.zeros((0, *self.img_X.shape))
         for lightModel, p in zip(self.phys_model.lens_light, lens_light_params):
             img = tf.concat(
-                (img, lightModel.light(self.img_X, self.img_Y, **p)), axis=0
+                (img, lightModel.light(self.img_X, self.img_Y, **p)[tf.newaxis, ...]),
+                axis=0,
             )
         for lightModel, p in zip(self.phys_model.source_light, source_light_params):
-            img = tf.concat((img, lightModel.light(beta_x, beta_y, **p)), axis=0)
+            img = tf.concat(
+                (img, lightModel.light(beta_x, beta_y, **p)[tf.newaxis, ...]), axis=0
+            )
         img = tf.where(tf.math.is_nan(img), tf.zeros_like(img), img)
         img = tf.transpose(
             img, (3, 1, 2, 0)
         )  # batch size, height, width, number of light components
-        img = tf.reshape(img, (self.bs, self.numPix, self.numPix, self.depth))
+        img = tf.reshape(
+            img,
+            (
+                self.bs,
+                self.numPix * self.supersample,
+                self.numPix * self.supersample,
+                self.depth,
+            ),
+        )
 
         img = (
             tf.nn.depthwise_conv2d(
