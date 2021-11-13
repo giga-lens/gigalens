@@ -35,28 +35,24 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             bs=n_samples // dev_cnt,
         )
         seed = jax.random.PRNGKey(seed)
-
-        start = (
-            self.prob_model.prior.sample(n_samples, seed=seed)
-            if start is None
-            else start
-        )
-        params = jnp.stack(self.prob_model.bij.inverse(start))
+        
+        start = self.prob_model.prior.sample(n_samples, seed=seed) if start is None else start
+        params = jnp.stack(self.prob_model.bij.inverse(start)).T
 
         opt_state = optimizer.init(params)
-
+        
         def loss(z):
             lp, chisq = self.prob_model.log_prob(lens_sim, z)
-            return -jnp.mean(lp) / jnp.size(self.prob_model.observed_image), chisq
+            return -jnp.mean(lp)/jnp.size(self.prob_model.observed_image), chisq
 
         loss_and_grad = jax.pmap(jax.value_and_grad(loss, has_aux=True))
 
         def update(params, opt_state):
-            splt_params = jnp.array(jnp.split(params, 4, axis=1))
+            splt_params = jnp.array(jnp.split(params, 4, axis=0))
             (_, chisq), grads = loss_and_grad(splt_params)
-            grads = jnp.concatenate(grads, axis=-1)
-            chisq = jnp.concatenate(chisq, axis=-1)
-
+            grads = jnp.concatenate(grads, axis=0)
+            chisq = jnp.concatenate(chisq, axis=0)
+            
             updates, opt_state = optimizer.update(grads, opt_state)
             new_params = optax.apply_updates(params, updates)
             return chisq, new_params, opt_state
@@ -64,10 +60,9 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         with trange(num_steps) as pbar:
             for step in pbar:
                 loss, params, opt_state = update(params, opt_state)
-                if step % 20 == 0:
-                    pbar.set_description(
-                        f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True).to_py()):.3f}"
-                    )
+                pbar.set_description(
+                    f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True).to_py()):.3f}"
+                )
         return params
 
     def SVI(
@@ -86,17 +81,20 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             self.sim_config,
             bs=n_vi // dev_cnt,
         )
-
+        jac = jax.jacfwd(lambda x: self.prob_model.pack_bij.inverse(self.prob_model.bij.forward(list(x.T))))(start)
         scale = jnp.diag(
-            jnp.ones(len(start))
+            jnp.ones(jnp.size(start))
             * 1e-3
-            * jnp.diag(jnp.linalg.inv(jax.jacfwd(self.prob_model.bij.forward)(start)))
+            * jnp.diag(jnp.linalg.inv(jnp.squeeze(jnp.stack(jac))))
         )
+        scale = jnp.diag(jnp.ones(jnp.size(start))) * 1e-3
         cov_bij = tfp.bijectors.FillScaleTriL(diag_bijector=tfb.Exp(), diag_shift=1e-6)
-        qz_params = jnp.concatenate([start, cov_bij.inverse(scale)], axis=0)
+        qz_params = jnp.concatenate(
+            [jnp.squeeze(start), cov_bij.inverse(scale)], axis=0
+        )
         replicated_params = jax.tree_map(lambda x: jnp.array([x] * dev_cnt), qz_params)
 
-        n_params = len(start)
+        n_params = jnp.size(start)
 
         def elbo(qz_params, seed):
             mean = qz_params[:n_params]
@@ -104,7 +102,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             qz = tfd.MultivariateNormalTriL(loc=mean, scale_tril=cov)
             z = qz.sample(n_vi // dev_cnt, seed=seed)
             lps = qz.log_prob(z)
-            return jnp.mean(lps - self.prob_model.log_prob(lens_sim, z))
+            return jnp.mean(lps - self.prob_model.log_prob(lens_sim, z)[0])
 
         elbo_and_grad = jit(jax.value_and_grad(jit(elbo), argnums=(0,)))
 
@@ -124,8 +122,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
                 seeds = jax.random.split(seeds[0], dev_cnt)
                 updates, opt_state = optimizer.update(grads, opt_state)
                 replicated_params = optax.apply_updates(replicated_params, updates)
-                if step % 10 == 0:
-                    pbar.set_description(f"Chi-squared: {loss:.3f}")
+                pbar.set_description(f"ELBO: {loss:.3f}")
                 loss_hist.append(loss)
         mean = replicated_params[0, :n_params]
         cov = cov_bij.forward(replicated_params[0, n_params:])
