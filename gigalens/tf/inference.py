@@ -17,7 +17,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
     def MAP(self, optimizer, start=None, n_samples=500, num_steps=350, seed=0):
         tf.random.set_seed(seed)
         start = self.prob_model.prior.sample(n_samples) if start is None else start
-        trial = [tf.Variable(z) for z in self.prob_model.bij.inverse(start)]
+        trial = tf.Variable(self.prob_model.bij.inverse(start))
         lens_sim = gigalens.tf.simulator.LensSimulator(
             self.phys_model, self.sim_config, bs=n_samples
         )
@@ -30,8 +30,8 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             with tf.GradientTape() as tape:
                 log_prob, square_err = self.prob_model.log_prob(lens_sim, trial)
                 agg_loss = tf.reduce_mean(-log_prob / observed_image_size)
-            gradients = tape.gradient(agg_loss, trial)
-            optimizer.apply_gradients(zip(gradients, trial))
+            gradients = tape.gradient(agg_loss, [trial])
+            optimizer.apply_gradients(zip(gradients, [trial]))
             return square_err
 
         with trange(num_steps) as pbar:
@@ -49,12 +49,15 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         )
         tmp = tf.Variable(start)
         with tf.GradientTape() as tape:
-            ginv = self.prob_model.bij.inverse(tmp)
-        Jinv = np.diag(tape.jacobian(ginv, tmp))  # Inverse jacobian.
+            ginv = self.prob_model.pack_bij.inverse(self.prob_model.bij.forward(tmp))
+        Jinv = np.diag(
+            tf.linalg.inv(tf.squeeze(tf.convert_to_tensor(tape.jacobian(ginv, tmp))))
+        )  # Inverse Jacobian.
+        start = tf.squeeze(start)
         scale = np.ones(len(start)).astype(np.float32) * 1e-3
         scale = Jinv * scale
         q_z = tfd.MultivariateNormalTriL(
-            loc=tf.Variable(self.prob_model.bij.inverse(start)),
+            loc=tf.Variable(start),
             scale_tril=tfp.util.TransformedVariable(
                 np.diag(scale),
                 tfp.bijectors.FillScaleTriL(diag_bijector=tfb.Exp(), diag_shift=1e-6),
@@ -63,7 +66,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         )
 
         losses = tfp.vi.fit_surrogate_posterior(
-            lambda z: self.prob_model(lens_sim, z)[0],
+            lambda z: self.prob_model.log_prob(lens_sim, z)[0],
             surrogate_posterior=q_z,
             sample_size=n_vi,
             optimizer=optimizer,

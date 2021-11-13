@@ -61,7 +61,8 @@ class ModellingSequenceInterface(ABC):
         Args:
             optimizer: An optimizer with which to minimize the ELBO loss. Adam or variants thereof are recommended,
                 using slow learning rate warm-up.
-            start: Initial guess for posterior mean
+            start: Initial guess for posterior mean. Must be shape `(1,d)`, where `d` is the number of parameters.
+                Convention is that it is in unconstrained parameter space.
             n_vi (int): Number of samples with which to approximate the ELBO loss
             num_steps (int): Number of optimization steps
             seed: A random seed for drawing samples from the posterior ansatz

@@ -35,15 +35,19 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             bs=n_samples // dev_cnt,
         )
         seed = jax.random.PRNGKey(seed)
-        
-        start = self.prob_model.prior.sample(n_samples, seed=seed) if start is None else start
+
+        start = (
+            self.prob_model.prior.sample(n_samples, seed=seed)
+            if start is None
+            else start
+        )
         params = jnp.stack(self.prob_model.bij.inverse(start))
 
         opt_state = optimizer.init(params)
-        
+
         def loss(z):
             lp, chisq = self.prob_model.log_prob(lens_sim, z)
-            return -jnp.mean(lp)/jnp.size(self.prob_model.observed_image), chisq
+            return -jnp.mean(lp) / jnp.size(self.prob_model.observed_image), chisq
 
         loss_and_grad = jax.pmap(jax.value_and_grad(loss, has_aux=True))
 
@@ -52,7 +56,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             (_, chisq), grads = loss_and_grad(splt_params)
             grads = jnp.concatenate(grads, axis=-1)
             chisq = jnp.concatenate(chisq, axis=-1)
-            
+
             updates, opt_state = optimizer.update(grads, opt_state)
             new_params = optax.apply_updates(params, updates)
             return chisq, new_params, opt_state
@@ -86,12 +90,10 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         scale = jnp.diag(
             jnp.ones(len(start))
             * 1e-3
-            * jnp.diag(jax.jacfwd(self.prob_model.bij.inverse)(start))
+            * jnp.diag(jnp.linalg.inv(jax.jacfwd(self.prob_model.bij.forward)(start)))
         )
         cov_bij = tfp.bijectors.FillScaleTriL(diag_bijector=tfb.Exp(), diag_shift=1e-6)
-        qz_params = jnp.concatenate(
-            [self.prob_model.bij.inverse(start), cov_bij.inverse(scale)], axis=0
-        )
+        qz_params = jnp.concatenate([start, cov_bij.inverse(scale)], axis=0)
         replicated_params = jax.tree_map(lambda x: jnp.array([x] * dev_cnt), qz_params)
 
         n_params = len(start)

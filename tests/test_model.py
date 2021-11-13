@@ -81,11 +81,21 @@ def default_data():
 
 def test_bij(default_prior):
     model = ForwardProbModel(default_prior, np.ones((20, 20)), 1, 1)
-    sample = default_prior.sample(seed=0)
+    sample = default_prior.sample(5, seed=0)
     assert np.allclose(
         tf.nest.flatten(model.bij.forward(model.bij.inverse(sample))),
         tf.nest.flatten(sample),
     )
+
+
+def test_prior(default_prior):
+    model = ForwardProbModel(default_prior, np.ones((20, 20)), 1, 1)
+    sample = default_prior.sample(5, seed=0)
+    z = model.bij.inverse(sample)
+    det_factor = model.unconstraining_bij.forward_log_det_jacobian(
+        model.pack_bij.forward(z)
+    )
+    assert int(tf.size(det_factor)) == 5
 
 
 def test_map(default_prior, default_physmodel: PhysicalModel, default_data):
