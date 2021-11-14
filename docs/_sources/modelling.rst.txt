@@ -1,0 +1,33 @@
+Probabilistic Inference Pipeline
+====================================
+In its current implementation, there are four major steps in doing inference on
+an observed lensing system.
+
+Model Specification
+------------------------------------
+
+The first is always necessary: model specification. Of course, we cannot begin to
+do inference on our data without writing out, explicitly, a model that 'tells us
+how the data was generated'. For gravitational lenses, this is comprised of:
+
+    a. A parameterized physical model for the lensing system. This is a model for the mass profile of the main lens,
+       potentially a model the effects of any nearby interlopers, and a model for the light of both
+       the lens and source.
+
+    b. A probabilistic model, that consists of a prior for the physical parameters, as well as
+       a likelihood function. Defining a likelihood requires a noise model, which for most purposes
+       will consist of modeling the noise on a given pixel as the independent sum of background Gaussian
+       noise :math:`\sigma_{bkg}` (conventionally written as ``background_rms``) and Poisson shot noise
+       with exposure time :math:`t_{exp}` (conventionally written as ``exp_time``).
+
+Although these two components of the model are not completely separate (since the prior in the
+probabilistic model is for parameters defined by the physical model), they are mostly decoupled.
+Therefore, in our implementation, we are careful to keep these two components of the model distinct.
+The following are our package's high level descriptions for a physical and probabilistic model.
+
+.. automodule:: gigalens.model
+    :members:
+
+MAP, SVI, and HMC
+------------------------------------
+Given an observed system, the goal is to draw samples from the posterior distribution.

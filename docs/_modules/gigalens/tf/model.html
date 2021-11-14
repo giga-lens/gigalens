@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gigalens.tf.model &#8212; gigalens  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for gigalens.tf.model</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tensorflow implementations of the probabilistic models. The unconstraining bijectors here take structured parameters</span>
+<span class="sd">(i.e., following the convention `(lens_params, lens_light_params, source_light_params)`, where each of the three entries</span>
+<span class="sd">in the tuple is itself a list of dictionaries, each dictionary containing parameters for the given object.</span>
+<span class="sd">For instance, ::</span>
+
+<span class="sd">    (</span>
+<span class="sd">        [</span>
+<span class="sd">            {&#39;theta_E&#39;: 1.0, &#39;center_x&#39;: 0.0, &#39;center_y&#39;: 0.0},</span>
+<span class="sd">            {&#39;gamma1&#39;: 0.0, &#39;gamma2&#39;: 0.0}</span>
+<span class="sd">        ], [</span>
+<span class="sd">            {&#39;R_sersic&#39;: 1.0, &#39;n_sersic&#39;: 2.0, &#39;center_x&#39;: 0.0, &#39;center_y&#39;: 0.0, &#39;e1&#39;: 0., &#39;e2&#39;: 0.0},</span>
+<span class="sd">            {&#39;R_sersic&#39;: 2.0, &#39;n_sersic&#39;: 3.0, &#39;center_x&#39;: 0.0, &#39;center_y&#39;: 0.0, &#39;e1&#39;: 0.1, &#39;e2&#39;: 0.1},</span>
+<span class="sd">        ], [</span>
+<span class="sd">            {&#39;R_sersic&#39;: 0.1, &#39;n_sersic&#39;: 1.0, &#39;center_x&#39;: 0.0, &#39;center_y&#39;: 0.0, &#39;e1&#39;: 0., &#39;e2&#39;: 0.0},</span>
+<span class="sd">        ]</span>
+<span class="sd">    )</span>
+
+<span class="sd">would be a sample from a model consisting of an SIS + shear for the lens, 2 Sersic components for the lens, and 1</span>
+<span class="sd">Sersic component for the source. This is mapped to unconstrained space by first applying unconstraining bijectors</span>
+<span class="sd">to the parameters in the nested structure. However, since TensorFlow doesn&#39;t like these nested structures, we prefer</span>
+<span class="sd">to flatten this structure to a tensor. The built-in :obj:`tfp.bijectors.Restructure` does this conveniently. However,</span>
+<span class="sd">this still outputs a list of tensors, when ideally we would like to concatenate all of them into one single Tensor.</span>
+<span class="sd">This can be done with :obj:`tfp.bijectors.Split`, but this will completely flatten the parameters into a length</span>
+<span class="sd">``bs*d`` vector. We reshape using the remaining two transforms (:obj:`tfp.bijectors.Reshape` and</span>
+<span class="sd">:obj:`tfp.bijectors.Transpose`). Due to this, the `log_prob` method for both :obj:`~gigalens.tf.model.ForwardProbModel`</span>
+<span class="sd">and :obj:`~gigalens.tf.model.BackwardProbModel` expect a rank-2 Tensor ``z`` with shape ``(bs,d)``. If you</span>
+<span class="sd">are looking to evaluate the log density for just one example, you must expand the first dimension so it has shape</span>
+<span class="sd">`(1,d)`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow_probability</span> <span class="kn">import</span> <span class="n">distributions</span> <span class="k">as</span> <span class="n">tfd</span><span class="p">,</span> <span class="n">bijectors</span> <span class="k">as</span> <span class="n">tfb</span>
+
+<span class="kn">import</span> <span class="nn">gigalens.model</span>
+<span class="kn">import</span> <span class="nn">gigalens.tf.simulator</span>
+
+
+<div class="viewcode-block" id="ForwardProbModel"><a class="viewcode-back" href="../../../index.html#gigalens.tf.model.ForwardProbModel">[docs]</a><span class="k">class</span> <span class="nc">ForwardProbModel</span><span class="p">(</span><span class="n">gigalens</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">ProbabilisticModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Probabilistic model defined using the simulated image as an estimator for the noise variance map. Linear parameters</span>
+<span class="sd">    *are not* automatically solved for using least squares.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        observed_image (:obj:`tf.Tensor` or :obj:`numpy.array`): The observed image.</span>
+<span class="sd">        background_rms (float): The estimated background Gaussian noise level</span>
+<span class="sd">        exp_time (float): The exposure time (used for calculating Poisson shot noise)</span>
+<span class="sd">        pack_bij (:obj:`tfp.bijectors.Bijector`): A bijector that reshapes from a tensor to a structured parameter</span>
+<span class="sd">            object (i.e., dictionaries of parameter values). Does not change the input parameters whatsoever, it only</span>
+<span class="sd">            reshapes them.</span>
+<span class="sd">        unconstraining_bij (:obj:`tfp.bijectors.Bijector`): A bijector that maps from physical parameter space to</span>
+<span class="sd">            unconstrained parameter space. Outputs an identical structure as the input, only maps values to</span>
+<span class="sd">            unconstrained space.</span>
+<span class="sd">        bij (:obj:`tfp.bijectors.Bijector`): The composition of :attr:`~gigalens.tf.model.ForwardProbModel.pack_bij` and</span>
+<span class="sd">            :attr:`~gigalens.tf.model.ForwardProbModel.unconstraining_bij`. The inverse method of ``bij`` will</span>
+<span class="sd">            unconstrain parameter values and then flatten the entire structure into one tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prior</span><span class="p">:</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Distribution</span><span class="p">,</span>
+        <span class="n">observed_image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">background_rms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">exp_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ForwardProbModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observed_image</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">observed_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background_rms</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">background_rms</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_time</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">exp_time</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">example</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">nest</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">example</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pack_bij</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Chain</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">pack_sequence_as</span><span class="p">(</span><span class="n">example</span><span class="p">),</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">Split</span><span class="p">(</span><span class="n">size</span><span class="p">),</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">Reshape</span><span class="p">(</span><span class="n">event_shape_out</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,),</span> <span class="n">event_shape_in</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">Transpose</span><span class="p">(</span><span class="n">perm</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unconstraining_bij</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">experimental_default_event_space_bijector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bij</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Chain</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">unconstraining_bij</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_bij</span><span class="p">])</span>
+
+<div class="viewcode-block" id="ForwardProbModel.log_prob"><a class="viewcode-back" href="../../../index.html#gigalens.tf.model.ForwardProbModel.log_prob">[docs]</a>    <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulator</span><span class="p">:</span> <span class="n">gigalens</span><span class="o">.</span><span class="n">tf</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">LensSimulator</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate the reparameterized log posterior density for a batch of unconstrained lens parameters ``z``.</span>
+<span class="sd">        Simulates the lenses with parameters ``z`` to evaluate the log likelihood. The log prior is calculated by</span>
+<span class="sd">        calculating the log prior in physical parameter space and adding the log determinant of the Jacobian.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            The log determinant for the default bijector will output a scalar regardless of the batch size of ``z`` due</span>
+<span class="sd">            to the flattening behavior of :obj:`tfp.bijectors.Split`. To get around this, we use the fact that</span>
+<span class="sd">            :attr:`~gigalens.tf.model.ForwardProbModel.pack_bij` has determinant 1 (it simply reshapes/restructures the</span>
+<span class="sd">            input), and the determinant comes purely from</span>
+<span class="sd">            :attr:`~gigalens.tf.model.ForwardProbModel.unconstraining_bij`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            simulator (:obj:`~gigalens.tf.simulator.LensSimulator`): A simulator object that has the same batch size</span>
+<span class="sd">                as ``z``.</span>
+<span class="sd">            z (:obj:`tf.Tensor`): Parameters in unconstrained space with shape ``(bs, d)``, where ``bs`` is the batch</span>
+<span class="sd">                size and ``d`` is the number of parameters per lens.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The reparameterized log posterior density, with shape ``(bs,)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bij</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">im_sim</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">err_map</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background_rms</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">im_sim</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_time</span><span class="p">)</span>
+        <span class="n">log_like</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Independent</span><span class="p">(</span>
+            <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">im_sim</span><span class="p">,</span> <span class="n">err_map</span><span class="p">),</span> <span class="n">reinterpreted_batch_ndims</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observed_image</span><span class="p">)</span>
+        <span class="n">log_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span>
+            <span class="n">x</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstraining_bij</span><span class="o">.</span><span class="n">forward_log_det_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_bij</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">log_prior</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+            <span class="p">((</span><span class="n">im_sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">observed_image</span><span class="p">)</span> <span class="o">/</span> <span class="n">err_map</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BackwardProbModel"><a class="viewcode-back" href="../../../index.html#gigalens.tf.model.BackwardProbModel">[docs]</a><span class="k">class</span> <span class="nc">BackwardProbModel</span><span class="p">(</span><span class="n">gigalens</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">ProbabilisticModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Probabilistic model defined using the observed image as an estimator for the noise variance map. Linear parameters</span>
+<span class="sd">    *are* automatically solved for using least squares.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        observed_image (:obj:`tf.Tensor` or :obj:`numpy.array`): The observed image.</span>
+<span class="sd">        background_rms (float): The estimated background Gaussian noise level</span>
+<span class="sd">        exp_time (float): The exposure time (used for calculating Poisson shot noise)</span>
+<span class="sd">        pack_bij (:obj:`tfp.bijectors.Bijector`): A bijector that reshapes from a tensor to a structured parameter</span>
+<span class="sd">            object (i.e., dictionaries of parameter values). Does not change the input parameters whatsoever, it only</span>
+<span class="sd">            reshapes them.</span>
+<span class="sd">        unconstraining_bij (:obj:`tfp.bijectors.Bijector`): A bijector that maps from physical parameter space to</span>
+<span class="sd">            unconstrained parameter space. Outputs an identical structure as the input, only maps values to</span>
+<span class="sd">            unconstrained space.</span>
+<span class="sd">        bij (:obj:`tfp.bijectors.Bijector`): The composition of :attr:`~gigalens.tf.model.ForwardProbModel.pack_bij` and</span>
+<span class="sd">            :attr:`~gigalens.tf.model.ForwardProbModel.unconstraining_bij`. The inverse method of ``bij`` will</span>
+<span class="sd">            unconstrain parameter values and then flatten the entire structure into one tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">prior</span><span class="p">:</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">observed_image</span><span class="p">,</span> <span class="n">background_rms</span><span class="p">,</span> <span class="n">exp_time</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BackwardProbModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
+        <span class="n">err_map</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="n">background_rms</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">tf</span><span class="o">.</span><span class="n">clip_by_value</span><span class="p">(</span><span class="n">observed_image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="o">/</span> <span class="n">exp_time</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observed_dist</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Independent</span><span class="p">(</span>
+            <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">observed_image</span><span class="p">,</span> <span class="n">err_map</span><span class="p">),</span> <span class="n">reinterpreted_batch_ndims</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observed_image</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">observed_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">err_map</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">err_map</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">example</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">nest</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">example</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pack_bij</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Chain</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">pack_sequence_as</span><span class="p">(</span><span class="n">example</span><span class="p">),</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">Split</span><span class="p">(</span><span class="n">size</span><span class="p">),</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">Reshape</span><span class="p">(</span><span class="n">event_shape_out</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,),</span> <span class="n">event_shape_in</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+                <span class="n">tfb</span><span class="o">.</span><span class="n">Transpose</span><span class="p">(</span><span class="n">perm</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unconstraining_bij</span> <span class="o">=</span> <span class="n">prior</span><span class="o">.</span><span class="n">experimental_default_event_space_bijector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bij</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Chain</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">unconstraining_bij</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_bij</span><span class="p">])</span>
+
+<div class="viewcode-block" id="BackwardProbModel.log_prob"><a class="viewcode-back" href="../../../index.html#gigalens.tf.model.BackwardProbModel.log_prob">[docs]</a>    <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulator</span><span class="p">:</span> <span class="n">gigalens</span><span class="o">.</span><span class="n">tf</span><span class="o">.</span><span class="n">simulator</span><span class="o">.</span><span class="n">LensSimulator</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate the reparameterized log posterior density for a batch of unconstrained lens parameters ``z``.</span>
+<span class="sd">        Simulates the lenses with parameters ``z`` (using least squares to solve for linear light parameters) to</span>
+<span class="sd">        evaluate the log likelihood. The log prior is calculated by  calculating the log prior in physical parameter</span>
+<span class="sd">        space and adding the log determinant of the Jacobian.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            The log determinant for the default bijector will output a scalar regardless of the batch size of ``z`` due</span>
+<span class="sd">            to the flattening behavior of :obj:`tfp.bijectors.Split`. To get around this, we use the fact that</span>
+<span class="sd">            :attr:`~gigalens.tf.model.ForwardProbModel.pack_bij` has determinant 1 (it simply reshapes/restructures the</span>
+<span class="sd">            input), and the determinant comes purely from</span>
+<span class="sd">            :attr:`~gigalens.tf.model.ForwardProbModel.unconstraining_bij`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            simulator (:obj:`~gigalens.tf.simulator.LensSimulator`): A simulator object that has the same batch size</span>
+<span class="sd">                as ``z``.</span>
+<span class="sd">            z (:obj:`tf.Tensor`): Parameters in unconstrained space with shape ``(bs, d)``, where ``bs`` is the batch</span>
+<span class="sd">                size and ``d`` is the number of parameters per lens.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The reparameterized log posterior density, with shape ``(bs,)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bij</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">im_sim</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">lstsq_simulate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observed_image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_map</span><span class="p">)</span>
+        <span class="n">log_like</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observed_dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">im_sim</span><span class="p">)</span>
+        <span class="n">log_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span>
+            <span class="n">x</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstraining_bij</span><span class="o">.</span><span class="n">forward_log_det_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_bij</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">log_like</span> <span class="o">+</span> <span class="n">log_prior</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+            <span class="p">((</span><span class="n">im_sim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">observed_image</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_map</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">gigalens</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Andi Gu.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

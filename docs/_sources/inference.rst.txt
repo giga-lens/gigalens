@@ -1,0 +1,13 @@
+Probabilistic Inference Pipeline
+====================================
+In its current implementation, there are four major steps in doing inference on
+an observed lensing system.
+
+Model Specification
+------------------------------------
+
+The first is always necessary: model specification.
+
+MAP, SVI, and HMC
+------------------------------------
+Given an observed system, the goal is to draw samples from the posterior distribution.

@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TensorFlow and JAX &#8212; gigalens  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bibliography and Acknowledgements" href="bib.html" />
+    <link rel="prev" title="Philosophy" href="philosophy.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="tensorflow-and-jax">
+<h1>TensorFlow and JAX<a class="headerlink" href="#tensorflow-and-jax" title="Permalink to this headline">¶</a></h1>
+<p>This package provides two ‘substrates’ for modeling: modeling with TensorFlow and modeling with JAX.
+The benefits of modeling with TensorFlow include an easier setup (TensorFlow is fairly standard anywhere
+with access to GPUs), and a more mature implementation of algorithms such as variational
+inference and HMC in TensorFlow Probability (TFP). However, TensorFlow does not provide an easy
+way to parallelize across multiple GPUs. JAX, on the other hand, natively supports multiple
+devices, and has experimental support in TFP. For beginners, we recommend starting with the
+TensorFlow implementation in <code class="docutils literal notranslate"><span class="pre">gigalens.tf</span></code> – however, for experienced users who may be willing experiment,
+<code class="docutils literal notranslate"><span class="pre">gigalens.jax</span></code> can be significantly faster than <code class="docutils literal notranslate"><span class="pre">gigalens.tf</span></code>.</p>
+<p>Although the two implementations are fundamentally identical, there are some small differences.
+The most significant is that the unconstraining bijector used in the JAX implementation is not
+able to fully flatten unconstrained parameters into a JAX array. This seems to be due to limited
+support for <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/substrates/jax/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.substrates.jax.bijectors.Split</span></code></a>, and this may be resolved in upcoming releases
+as the JAX substrate in TFP matures. Similarly, the VI for JAX is implemented
+within the <code class="docutils literal notranslate"><span class="pre">gigalens</span></code> package, whereas in the TensorFlow implementation, TFP already implements
+VI, so we use their built-in method (see <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/vi/fit_surrogate_posterior" title="(in TensorFlow Probability v0.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">tfp.vi.fit_surrogate_posterior()</span></code></a>)</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">gigalens</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TensorFlow and JAX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="philosophy.html" title="previous chapter">Philosophy</a></li>
+      <li>Next: <a href="bib.html" title="next chapter">Bibliography and Acknowledgements</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Andi Gu.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/substrates.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

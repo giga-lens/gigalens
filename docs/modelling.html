@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Probabilistic Inference Pipeline &#8212; gigalens  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Probabilistic Framework" href="probability.html" />
+    <link rel="prev" title="Welcome to gigalens’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="probabilistic-inference-pipeline">
+<h1>Probabilistic Inference Pipeline<a class="headerlink" href="#probabilistic-inference-pipeline" title="Permalink to this headline">¶</a></h1>
+<p>In its current implementation, there are four major steps in doing inference on
+an observed lensing system.</p>
+<section id="model-specification">
+<h2>Model Specification<a class="headerlink" href="#model-specification" title="Permalink to this headline">¶</a></h2>
+<p>The first is always necessary: model specification. Of course, we cannot begin to
+do inference on our data without writing out, explicitly, a model that ‘tells us
+how the data was generated’. For gravitational lenses, this is comprised of:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>A parameterized physical model for the lensing system. This is a model for the mass profile of the main lens,
+potentially a model the effects of any nearby interlopers, and a model for the light of both
+the lens and source.</p></li>
+<li><p>A probabilistic model, that consists of a prior for the physical parameters, as well as
+a likelihood function. Defining a likelihood requires a noise model, which for most purposes
+will consist of modeling the noise on a given pixel as the independent sum of background Gaussian
+noise <span class="math notranslate nohighlight">\(\sigma_{bkg}\)</span> (conventionally written as <code class="docutils literal notranslate"><span class="pre">background_rms</span></code>) and Poisson shot noise
+with exposure time <span class="math notranslate nohighlight">\(t_{exp}\)</span> (conventionally written as <code class="docutils literal notranslate"><span class="pre">exp_time</span></code>).</p></li>
+</ol>
+</div></blockquote>
+<p>Although these two components of the model are not completely separate (since the prior in the
+probabilistic model is for parameters defined by the physical model), they are mostly decoupled.
+Therefore, in our implementation, we are careful to keep these two components of the model distinct.
+The following are our package’s high level descriptions for a physical and probabilistic model.</p>
+<span class="target" id="module-gigalens.model"></span><dl class="py class">
+<dt class="sig sig-object py" id="gigalens.model.PhysicalModel">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.model.</span></span><span class="sig-name descname"><span class="pre">PhysicalModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lenses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lens_light</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_light</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/model.html#PhysicalModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.model.PhysicalModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>A physical model for the lensing system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lenses</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="profiles.html#gigalens.profile.MassProfile" title="gigalens.profile.MassProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MassProfile</span></code></a>) – A list of mass profiles used to model the deflection</p></li>
+<li><p><strong>lens_light</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="profiles.html#gigalens.profile.LightProfile" title="gigalens.profile.LightProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LightProfile</span></code></a>) – A list of light profiles used to model the lens light</p></li>
+<li><p><strong>source_light</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="profiles.html#gigalens.profile.LightProfile" title="gigalens.profile.LightProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LightProfile</span></code></a>) – A list of light profiles used to model the source light</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.model.PhysicalModel.lenses">
+<span class="sig-name descname"><span class="pre">lenses</span></span><a class="headerlink" href="#gigalens.model.PhysicalModel.lenses" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of mass profiles used to model the deflection</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="profiles.html#gigalens.profile.MassProfile" title="gigalens.profile.MassProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MassProfile</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.model.PhysicalModel.lens_light">
+<span class="sig-name descname"><span class="pre">lens_light</span></span><a class="headerlink" href="#gigalens.model.PhysicalModel.lens_light" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of light profiles used to model the lens light</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="profiles.html#gigalens.profile.LightProfile" title="gigalens.profile.LightProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LightProfile</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.model.PhysicalModel.source_light">
+<span class="sig-name descname"><span class="pre">source_light</span></span><a class="headerlink" href="#gigalens.model.PhysicalModel.source_light" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of light profiles used to model the source light</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="profiles.html#gigalens.profile.LightProfile" title="gigalens.profile.LightProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LightProfile</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.model.</span></span><span class="sig-name descname"><span class="pre">ProbabilisticModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bij</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/model.html#ProbabilisticModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.model.ProbabilisticModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>A probabilistic model for the lensing system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prior</strong> – Prior distribution of lens parameters</p></li>
+<li><p><strong>bij</strong> – A bijector that can unconstrain physical parameters (e.g., applying an exponential bijector to strictly positive variables)</p></li>
+<li><p><strong>*args</strong> – Information about observed data (typically includes the observed image, estimated noise characteristics, etc.)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel.prior">
+<span class="sig-name descname"><span class="pre">prior</span></span><a class="headerlink" href="#gigalens.model.ProbabilisticModel.prior" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prior distribution of lens parameters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel.bij">
+<span class="sig-name descname"><span class="pre">bij</span></span><a class="headerlink" href="#gigalens.model.ProbabilisticModel.bij" title="Permalink to this definition">¶</a></dt>
+<dd><p>A bijector that can unconstrain physical parameters (e.g., applying an exponential bijector to strictly positive variables)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel.log_prob">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">log_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/model.html#ProbabilisticModel.log_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.model.ProbabilisticModel.log_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the unconstrained log posterior density (i.e., includes the Jacobian factor due to the bijector)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulator</strong> (<a class="reference internal" href="index.html#gigalens.simulator.LensSimulatorInterface" title="gigalens.simulator.LensSimulatorInterface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LensSimulatorInterface</span></code></a>) – an object that can simulate a lens with (unconstrained parameters) z</p></li>
+<li><p><strong>z</strong> – Unconstrained parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="map-svi-and-hmc">
+<h2>MAP, SVI, and HMC<a class="headerlink" href="#map-svi-and-hmc" title="Permalink to this headline">¶</a></h2>
+<p>Given an observed system, the goal is to draw samples from the posterior distribution.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">gigalens</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Probabilistic Inference Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#model-specification">Model Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#map-svi-and-hmc">MAP, SVI, and HMC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="probability.html">Probabilistic Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profiles.html">Mass and Light Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="substrates.html">TensorFlow and JAX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to gigalens’s documentation!</a></li>
+      <li>Next: <a href="probability.html" title="next chapter">Probabilistic Framework</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Andi Gu.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/modelling.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
