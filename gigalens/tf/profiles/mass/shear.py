@@ -4,6 +4,8 @@ import gigalens.profile
 
 
 class Shear(gigalens.profile.MassProfile):
+    """External shear model, parameterized by shear components ``gamma1`` and ``gamma2``."""
+
     _name = "SHEAR"
     _params = ["gamma1", "gamma2"]
 

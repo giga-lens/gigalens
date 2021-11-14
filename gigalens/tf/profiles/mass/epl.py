@@ -7,10 +7,16 @@ tfd = tfp.distributions
 
 
 class EPL(gigalens.profile.MassProfile):
+    """The elliptical power law mass profile, calculated iteratively as in :cite:p:`tessore2015a`.
+
+    Attributes:
+        niter (int): Maximum number of iterations for calculating the deflection.
+    """
+
     _name = "EPL"
     _params = ["theta_E", "gamma", "e1", "e2", "center_x", "center_y"]
 
-    def __init__(self, niter=18):
+    def __init__(self, niter=50):
         super().__init__(self)
         self.niter = niter
 

@@ -16,7 +16,7 @@ class SimulatorConfig:
         delta_pix (float): The pixel scale (i.e., the angular resolution between adjacent pixels)
         num_pix (int): The width of the simulated image in pixels.
         supersample (int): Supersampling factor
-        kernel: The point spread function with which to convolve simulated images
+        kernel (:obj:`numpy.array`, optional): The point spread function with which to convolve simulated images
         transform_pix2angle (:obj:`numpy.array`, optional): An array mapping indices on the coordinate grid to
             angular units (RA and DEC)
     """
@@ -29,6 +29,18 @@ class SimulatorConfig:
 
 
 class LensSimulatorInterface(ABC):
+    """
+    A class to simulate batches of lenses given a physical model and camera configuration options (i.e., pixel scale,
+    number of pixels, point spread function, etc.).
+
+    Attributes:
+        phys_model (:obj:`~gigalens.model.PhysicalModel`): The physical model that generated the lensing system. All
+            parameters ``z`` that are passed to the simulation methods are expected to correspond to this physical
+            model.
+        sim_config (:obj:`~gigalens.simulator.SimulatorConfig`): Camera configuration settings
+        bs (int): The number of lenses to simulate in parallel
+    """
+
     def __init__(
         self,
         phys_model: gigalens.model.PhysicalModel,

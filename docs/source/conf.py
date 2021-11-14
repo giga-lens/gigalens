@@ -34,7 +34,15 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
+    "sphinxcontrib.bibtex",
+    "sphinx_autodoc_typehints",
+    "sphinx.ext.viewcode",
+    "sphinx_toolbox.collapse",
 ]
+
+bibtex_bibfiles = ["refs.bib"]
+bibtex_default_style = "unsrtalpha"
+autodoc_member_order = "bysource"
 
 intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),

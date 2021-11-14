@@ -35,15 +35,19 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             bs=n_samples // dev_cnt,
         )
         seed = jax.random.PRNGKey(seed)
-        
-        start = self.prob_model.prior.sample(n_samples, seed=seed) if start is None else start
+
+        start = (
+            self.prob_model.prior.sample(n_samples, seed=seed)
+            if start is None
+            else start
+        )
         params = jnp.stack(self.prob_model.bij.inverse(start)).T
 
         opt_state = optimizer.init(params)
-        
+
         def loss(z):
             lp, chisq = self.prob_model.log_prob(lens_sim, z)
-            return -jnp.mean(lp)/jnp.size(self.prob_model.observed_image), chisq
+            return -jnp.mean(lp) / jnp.size(self.prob_model.observed_image), chisq
 
         loss_and_grad = jax.pmap(jax.value_and_grad(loss, has_aux=True))
 
@@ -52,7 +56,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             (_, chisq), grads = loss_and_grad(splt_params)
             grads = jnp.concatenate(grads, axis=0)
             chisq = jnp.concatenate(chisq, axis=0)
-            
+
             updates, opt_state = optimizer.update(grads, opt_state)
             new_params = optax.apply_updates(params, updates)
             return chisq, new_params, opt_state
@@ -80,12 +84,6 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             self.phys_model,
             self.sim_config,
             bs=n_vi // dev_cnt,
-        )
-        jac = jax.jacfwd(lambda x: self.prob_model.pack_bij.inverse(self.prob_model.bij.forward(list(x.T))))(start)
-        scale = jnp.diag(
-            jnp.ones(jnp.size(start))
-            * 1e-3
-            * jnp.diag(jnp.linalg.inv(jnp.squeeze(jnp.stack(jac))))
         )
         scale = jnp.diag(jnp.ones(jnp.size(start))) * 1e-3
         cov_bij = tfp.bijectors.FillScaleTriL(diag_bijector=tfb.Exp(), diag_shift=1e-6)

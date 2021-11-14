@@ -22,7 +22,6 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
         self.background_rms = jnp.float32(background_rms)
         self.exp_time = jnp.float32(exp_time)
         example = prior.sample(seed=random.PRNGKey(0))
-        size = len(jax.tree_util.tree_flatten(example)[0])
         self.pack_bij = tfb.pack_sequence_as(example)
         self.bij = tfb.Chain(
             [
@@ -30,7 +29,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
                 self.pack_bij,
             ]
         )
-    
+
     @functools.partial(jit, static_argnums=(0, 1))
     def log_prob(self, simulator: sim.LensSimulator, z):
         z = list(z.T)
@@ -67,7 +66,6 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
                 self.pack_bij,
             ]
         )
-        
 
     @functools.partial(jit, static_argnums=(0, 1))
     def log_prob(self, simulator: sim.LensSimulator, z):

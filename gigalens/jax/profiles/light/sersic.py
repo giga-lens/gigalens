@@ -13,12 +13,12 @@ class Sersic(gigalens.profile.LightProfile):
     @functools.partial(jit, static_argnums=(0,))
     def light(self, x, y, R_sersic, n_sersic, center_x, center_y, Ie=None):
         Ie = jnp.ones_like(R_sersic) if self.use_lstsq else Ie
-        R = self._distance(x, y, center_x, center_y)
+        R = self.distance(x, y, center_x, center_y)
         bn = 1.9992 * n_sersic - 0.3271
         return Ie * jnp.exp(-bn * ((R / R_sersic) ** (1 / n_sersic) - 1.0))
 
     @functools.partial(jit, static_argnums=(0,))
-    def _distance(self, x, y, cx, cy, e1=None, e2=None):
+    def distance(self, x, y, cx, cy, e1=None, e2=None):
         if e1 is None:
             e1 = jnp.zeros_like(cx)
         if e2 is None:
@@ -40,7 +40,7 @@ class SersicEllipse(Sersic):
     @functools.partial(jit, static_argnums=(0,))
     def light(self, x, y, R_sersic, n_sersic, e1, e2, center_x, center_y, Ie=None):
         Ie = jnp.ones_like(R_sersic) if self.use_lstsq else Ie
-        R = self._distance(x, y, center_x, center_y, e1, e2)
+        R = self.distance(x, y, center_x, center_y, e1, e2)
         bn = 1.9992 * n_sersic - 0.3271
         return Ie * jnp.exp(-bn * ((R / R_sersic) ** (1 / n_sersic) - 1.0))
 
@@ -76,7 +76,7 @@ class CoreSersic(Sersic):
         Ie=None,
     ):
         Ie = jnp.ones_like(R_sersic) if self.use_lstsq else Ie
-        R = self._distance(x, y, center_x, center_y, e1, e2)
+        R = self.distance(x, y, center_x, center_y, e1, e2)
         bn = 1.9992 * n_sersic - 0.3271
         result = (
             Ie

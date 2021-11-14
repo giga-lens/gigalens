@@ -40,22 +40,15 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
                 pbar.set_description(f"Chi Squared: {(np.nanmin(square_err)):.4f}")
         return trial
 
-    def SVI(self, optimizer, start, n_vi=250, num_steps=500, seed=0):
+    def SVI(self, optimizer, start, n_vi=250, num_steps=500, seed=2):
         tf.random.set_seed(seed)
         lens_sim = gigalens.tf.simulator.LensSimulator(
             self.phys_model,
             self.sim_config,
             bs=n_vi,
         )
-        tmp = tf.Variable(start)
-        with tf.GradientTape() as tape:
-            ginv = self.prob_model.pack_bij.inverse(self.prob_model.bij.forward(tmp))
-        Jinv = np.diag(
-            tf.linalg.inv(tf.squeeze(tf.convert_to_tensor(tape.jacobian(ginv, tmp))))
-        )  # Inverse Jacobian.
         start = tf.squeeze(start)
         scale = np.ones(len(start)).astype(np.float32) * 1e-3
-        scale = Jinv * scale
         q_z = tfd.MultivariateNormalTriL(
             loc=tf.Variable(start),
             scale_tril=tfp.util.TransformedVariable(
@@ -84,12 +77,12 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         num_burnin_steps=250,
         num_results=750,
         max_leapfrog_steps=30,
-        seed=0,
+        seed=3,
     ):
         def tqdm_progress_bar_fn(num_steps):
             return iter(tqdm(range(num_steps), desc="", leave=True))
 
-        tf.random.set_seed(0)
+        tf.random.set_seed(seed)
         lens_sim = gigalens.tf.simulator.LensSimulator(
             self.phys_model,
             self.sim_config,

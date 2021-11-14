@@ -8,9 +8,9 @@ import gigalens.simulator
 class ModellingSequenceInterface(ABC):
     """Defines the three steps in modelling:
 
-    1. MAP
-    2. VI using the MAP as a starting point
-    3. HMC using the inverse of the VI covariance matrix as the mass matrix :math:`M`
+    1. Multi-starts gradient descent to find the maximum a posteriori (MAP) estimate. See :cite:t:`marti2003,gyorgy2011`.
+    2. VI using the MAP as a starting point. See :cite:t:`hoffman2013,blei2017`.
+    3. HMC using the inverse of the VI covariance matrix as the mass matrix :math:`M`. See :cite:t:`duan1987a, neal2012a`.
 
     Args:
         phys_model (:obj:`~gigalens.model.PhysicalModel`): The physical model of the lensing system that we want to fit
@@ -88,8 +88,9 @@ class ModellingSequenceInterface(ABC):
 
         Args:
             q_z: Fitted posterior from SVI. Used to calculate the mass matrix :math:`M` for preconditioned HMC.
+                Convention is that ``q_z`` is an approximation of the *unconstrained* posterior.
             init_eps (float): Initial step size :math::`\epsilon`
-            init_l (int): Initial number of leapfrog steps :math::`L`
+            init_l (int): Initial number of leapfrog steps :math:`L`
             n_hmc (int): Number of HMC chains to run in parallel
             num_burnin_steps (int): Number of burn-in steps
             num_results (int): Number of samples to draw from each chain (after burning in)

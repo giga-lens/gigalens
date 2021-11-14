@@ -1,19 +1,17 @@
 Welcome to gigalens's documentation!
 ====================================
 
-.. automodule:: gigalens.model
-    :members:
-.. automodule:: gigalens.inference
-    :members:
-.. automodule:: gigalens.simulator
-    :members:
-.. automodule:: gigalens.profile
-    :members:
+This is a package for Gradient Informed, GPU Accelerated Lens modelling (GIGALens).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
+   philosophy.rst
+   model-spec.rst
+   simulation.rst
+   model-pipeline.rst
+   bib.rst
 
 
 Indices and tables
