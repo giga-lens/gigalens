@@ -1,39 +1,192 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Lens Simulation" href="simulation.html" /><link rel="prev" title="Philosophy" href="philosophy.html" />
 
-<!DOCTYPE html>
+    <meta name="generator" content="sphinx-4.1.2, furo 2021.11.12.1"/>
+        <title>Model Specification - GIGALens documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=cb850144ff767e23c5b2a31c47cdfe5847ae013d" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    
+    
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Model Specification &#8212; GIGALens  documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Lens Simulation" href="simulation.html" />
-    <link rel="prev" title="Philosophy" href="philosophy.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">GIGALens  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
+  <span class="sidebar-brand-text">GIGALens  documentation</span>
   
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
+</ul>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
-
-          <div class="body" role="main">
-            
-  <div class="section" id="model-specification">
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="model-specification">
 <h1>Model Specification<a class="headerlink" href="#model-specification" title="Permalink to this headline">¶</a></h1>
 <p>We cannot begin to do inference on our data without writing out, explicitly, a model for the data. Heuristically,
 a model ought to be a ‘story for how the observed data was generated’. A model for a gravitational
@@ -77,7 +230,6 @@ The following are our package’s high level descriptions for a physical and pro
 </dd>
 </dl>
 </dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gigalens.model.PhysicalModel.lens_light">
 <span class="sig-name descname"><span class="pre">lens_light</span></span><a class="headerlink" href="#gigalens.model.PhysicalModel.lens_light" title="Permalink to this definition">¶</a></dt>
@@ -88,7 +240,6 @@ The following are our package’s high level descriptions for a physical and pro
 </dd>
 </dl>
 </dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gigalens.model.PhysicalModel.source_light">
 <span class="sig-name descname"><span class="pre">source_light</span></span><a class="headerlink" href="#gigalens.model.PhysicalModel.source_light" title="Permalink to this definition">¶</a></dt>
@@ -99,9 +250,7 @@ The following are our package’s high level descriptions for a physical and pro
 </dd>
 </dl>
 </dd></dl>
-
 </dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.model.</span></span><span class="sig-name descname"><span class="pre">ProbabilisticModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bij</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/model.html#ProbabilisticModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.model.ProbabilisticModel" title="Permalink to this definition">¶</a></dt>
@@ -120,13 +269,11 @@ The following are our package’s high level descriptions for a physical and pro
 <span class="sig-name descname"><span class="pre">prior</span></span><a class="headerlink" href="#gigalens.model.ProbabilisticModel.prior" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prior distribution of lens parameters</p>
 </dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel.bij">
 <span class="sig-name descname"><span class="pre">bij</span></span><a class="headerlink" href="#gigalens.model.ProbabilisticModel.bij" title="Permalink to this definition">¶</a></dt>
 <dd><p>A bijector that can unconstrain physical parameters (e.g., applying an exponential bijector to strictly positive variables)</p>
 </dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gigalens.model.ProbabilisticModel.log_prob">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">log_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/model.html#ProbabilisticModel.log_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.model.ProbabilisticModel.log_prob" title="Permalink to this definition">¶</a></dt>
@@ -140,9 +287,7 @@ The following are our package’s high level descriptions for a physical and pro
 </dd>
 </dl>
 </dd></dl>
-
 </dd></dl>
-
 <div class="section" id="prior-specification">
 <h2>Prior Specification<a class="headerlink" href="#prior-specification" title="Permalink to this headline">¶</a></h2>
 <p>Once the physical model for the lens is settled, the next step is to specify the prior. If our model
@@ -224,10 +369,10 @@ with functions:</p>
 </pre></div>
 </div>
 <p>This corresponds to a prior</p>
-<div class="math notranslate nohighlight">
+<div class="math-wrapper"><div class="math notranslate nohighlight">
 \[\begin{split}\theta_E \sim \mathcal{N}(1.5,0.25) \\
 x \sim \mathcal{N}(\theta_E,0.25) \\
-y \sim \mathcal{N}(\theta_E,y) \\\end{split}\]</div>
+y \sim \mathcal{N}(\theta_E,y) \\\end{split}\]</div></div>
 <p>Obviously, this is a completely silly prior, but demonstrates the flexibility of the
 <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/distributions/JointDistribution" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.distributions.JointDistribution</span></code></a> interface.</p>
 <p>Sampling from the prior will produce samples that have an identical structure to the prior.
@@ -235,38 +380,38 @@ Sampling from the example prior might give something like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">[</span>
 <span class="linenos"> 2</span>    <span class="p">[</span>
 <span class="linenos"> 3</span>        <span class="p">{</span>
-<span class="linenos"> 4</span>            <span class="s2">&quot;theta_E&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.2670871</span><span class="p">,</span> <span class="mf">1.3154074</span><span class="p">],</span>
-<span class="linenos"> 5</span>            <span class="s2">&quot;center_y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.057920452</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.07995515</span><span class="p">],</span>
-<span class="linenos"> 6</span>            <span class="s2">&quot;center_x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.02513125</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.034906887</span><span class="p">],</span>
+<span class="linenos"> 4</span>            <span class="s2">"theta_E"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.2670871</span><span class="p">,</span> <span class="mf">1.3154074</span><span class="p">],</span>
+<span class="linenos"> 5</span>            <span class="s2">"center_y"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.057920452</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.07995515</span><span class="p">],</span>
+<span class="linenos"> 6</span>            <span class="s2">"center_x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.02513125</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.034906887</span><span class="p">],</span>
 <span class="linenos"> 7</span>        <span class="p">},</span>
 <span class="linenos"> 8</span>        <span class="p">{</span>
-<span class="linenos"> 9</span>            <span class="s2">&quot;gamma2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.026222957</span><span class="p">,</span> <span class="mf">0.0174865</span><span class="p">],</span>
-<span class="linenos">10</span>            <span class="s2">&quot;gamma1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.014953673</span><span class="p">,</span> <span class="mf">0.025195256</span><span class="p">]</span>
+<span class="linenos"> 9</span>            <span class="s2">"gamma2"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.026222957</span><span class="p">,</span> <span class="mf">0.0174865</span><span class="p">],</span>
+<span class="linenos">10</span>            <span class="s2">"gamma1"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.014953673</span><span class="p">,</span> <span class="mf">0.025195256</span><span class="p">]</span>
 <span class="linenos">11</span>        <span class="p">},</span>
 <span class="linenos">12</span>    <span class="p">],</span>
 <span class="linenos">13</span>    <span class="p">[</span>
 <span class="linenos">14</span>        <span class="p">{</span>
-<span class="linenos">15</span>            <span class="s2">&quot;n_sersic&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.55016</span><span class="p">,</span> <span class="mf">2.9208045</span><span class="p">],</span>
-<span class="linenos">16</span>            <span class="s2">&quot;center_y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.08046845</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.06934502</span><span class="p">],</span>
-<span class="linenos">17</span>            <span class="s2">&quot;center_x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.0336911</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.013034515</span><span class="p">],</span>
-<span class="linenos">18</span>            <span class="s2">&quot;R_sersic&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0177809</span><span class="p">,</span> <span class="mf">0.9325099</span><span class="p">],</span>
-<span class="linenos">19</span>            <span class="s2">&quot;Ie&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">150.55762</span><span class="p">,</span> <span class="mf">150.0797</span><span class="p">],</span>
+<span class="linenos">15</span>            <span class="s2">"n_sersic"</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.55016</span><span class="p">,</span> <span class="mf">2.9208045</span><span class="p">],</span>
+<span class="linenos">16</span>            <span class="s2">"center_y"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.08046845</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.06934502</span><span class="p">],</span>
+<span class="linenos">17</span>            <span class="s2">"center_x"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.0336911</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.013034515</span><span class="p">],</span>
+<span class="linenos">18</span>            <span class="s2">"R_sersic"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0177809</span><span class="p">,</span> <span class="mf">0.9325099</span><span class="p">],</span>
+<span class="linenos">19</span>            <span class="s2">"Ie"</span><span class="p">:</span> <span class="p">[</span><span class="mf">150.55762</span><span class="p">,</span> <span class="mf">150.0797</span><span class="p">],</span>
 <span class="linenos">20</span>        <span class="p">},</span>
 <span class="linenos">21</span>        <span class="p">{</span>
-<span class="linenos">22</span>            <span class="s2">&quot;n_sersic&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.1814566</span><span class="p">,</span> <span class="mf">3.0877438</span><span class="p">],</span>
-<span class="linenos">23</span>            <span class="s2">&quot;center_y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.033258155</span><span class="p">,</span> <span class="mf">0.055594254</span><span class="p">],</span>
-<span class="linenos">24</span>            <span class="s2">&quot;center_x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08249615</span><span class="p">,</span> <span class="mf">0.043057345</span><span class="p">],</span>
-<span class="linenos">25</span>            <span class="s2">&quot;R_sersic&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.2974737</span><span class="p">,</span> <span class="mf">1.0547239</span><span class="p">],</span>
-<span class="linenos">26</span>            <span class="s2">&quot;Ie&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">150.98956</span><span class="p">,</span> <span class="mf">149.52852</span><span class="p">],</span>
+<span class="linenos">22</span>            <span class="s2">"n_sersic"</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.1814566</span><span class="p">,</span> <span class="mf">3.0877438</span><span class="p">],</span>
+<span class="linenos">23</span>            <span class="s2">"center_y"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.033258155</span><span class="p">,</span> <span class="mf">0.055594254</span><span class="p">],</span>
+<span class="linenos">24</span>            <span class="s2">"center_x"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08249615</span><span class="p">,</span> <span class="mf">0.043057345</span><span class="p">],</span>
+<span class="linenos">25</span>            <span class="s2">"R_sersic"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.2974737</span><span class="p">,</span> <span class="mf">1.0547239</span><span class="p">],</span>
+<span class="linenos">26</span>            <span class="s2">"Ie"</span><span class="p">:</span> <span class="p">[</span><span class="mf">150.98956</span><span class="p">,</span> <span class="mf">149.52852</span><span class="p">],</span>
 <span class="linenos">27</span>        <span class="p">},</span>
 <span class="linenos">28</span>    <span class="p">],</span>
 <span class="linenos">29</span>    <span class="p">[</span>
 <span class="linenos">30</span>        <span class="p">{</span>
-<span class="linenos">31</span>            <span class="s2">&quot;n_sersic&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.9998379</span><span class="p">,</span> <span class="mf">2.1873033</span><span class="p">],</span>
-<span class="linenos">32</span>            <span class="s2">&quot;center_y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.16878262</span><span class="p">,</span> <span class="mf">0.24757618</span><span class="p">],</span>
-<span class="linenos">33</span>            <span class="s2">&quot;center_x&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.46696508</span><span class="p">,</span> <span class="mf">0.3786787</span><span class="p">],</span>
-<span class="linenos">34</span>            <span class="s2">&quot;R_sersic&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.2810259</span><span class="p">,</span> <span class="mf">0.27873865</span><span class="p">],</span>
-<span class="linenos">35</span>            <span class="s2">&quot;Ie&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">150.91617</span><span class="p">,</span> <span class="mf">150.61823</span><span class="p">],</span>
+<span class="linenos">31</span>            <span class="s2">"n_sersic"</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.9998379</span><span class="p">,</span> <span class="mf">2.1873033</span><span class="p">],</span>
+<span class="linenos">32</span>            <span class="s2">"center_y"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.16878262</span><span class="p">,</span> <span class="mf">0.24757618</span><span class="p">],</span>
+<span class="linenos">33</span>            <span class="s2">"center_x"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.46696508</span><span class="p">,</span> <span class="mf">0.3786787</span><span class="p">],</span>
+<span class="linenos">34</span>            <span class="s2">"R_sersic"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.2810259</span><span class="p">,</span> <span class="mf">0.27873865</span><span class="p">],</span>
+<span class="linenos">35</span>            <span class="s2">"Ie"</span><span class="p">:</span> <span class="p">[</span><span class="mf">150.91617</span><span class="p">,</span> <span class="mf">150.61823</span><span class="p">],</span>
 <span class="linenos">36</span>        <span class="p">}</span>
 <span class="linenos">37</span>    <span class="p">],</span>
 <span class="linenos">38</span><span class="p">]</span>
@@ -304,81 +449,76 @@ of the determinant of the bijector Jacobian.</p>
 </div>
 </div>
 
-
-          </div>
-          
-        </div>
+        </article>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">GIGALens</a></h1>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="simulation.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Lens Simulation</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="philosophy.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Philosophy</div>
+                
+              </div>
+            </a>
+        </div>
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Specification</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#prior-specification">Prior Specification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#unconstraining-and-restructuring-parameters">Unconstraining and Restructuring Parameters</a></li>
+        <div class="related-information">
+              Copyright &#169; 2021, Andi Gu |
+          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            | <a class="muted-link" href="_sources/model-spec.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Model Specification</a><ul>
+<li><a class="reference internal" href="#prior-specification">Prior Specification</a></li>
+<li><a class="reference internal" href="#unconstraining-and-restructuring-parameters">Unconstraining and Restructuring Parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
 </ul>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="philosophy.html" title="previous chapter">Philosophy</a></li>
-      <li>Next: <a href="simulation.html" title="next chapter">Lens Simulation</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
+          </div>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2021, Andi Gu.
       
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
-      |
-      <a href="_sources/model-spec.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
 </html>
