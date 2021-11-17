@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
+import numpy as np
 import gigalens.model
 import gigalens.simulator
 
@@ -54,7 +55,7 @@ class ModellingSequenceInterface(ABC):
         pass
 
     @abstractmethod
-    def SVI(self, optimizer, start, n_vi: int, num_steps: int, seed: Any):
+    def SVI(self, optimizer, start, n_vi: int, num_steps: int, init_scales: Union[float, np.array], seed: Any):
         """Runs stochastic variational inference (SVI) to characterize the posterior scales. Currently, only
         multi-variate Gaussian ansatz is supported.
 
@@ -65,6 +66,7 @@ class ModellingSequenceInterface(ABC):
                 Convention is that it is in unconstrained parameter space.
             n_vi (int): Number of samples with which to approximate the ELBO loss
             num_steps (int): Number of optimization steps
+            init_scales (float or :obj:np.array): Initial VI standard deviation guess
             seed: A random seed for drawing samples from the posterior ansatz
 
         Returns:

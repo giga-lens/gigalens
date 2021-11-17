@@ -33,8 +33,8 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         _, _, img_X, img_Y = self.get_coords(
             self.supersample, sim_config.num_pix, np.array(self.transform_pix2angle)
         )
-        self.img_X = jnp.repeat(img_X[...,jnp.newaxis], bs, axis=-1)
-        self.img_Y = jnp.repeat(img_Y[...,jnp.newaxis], bs, axis=-1)
+        self.img_X = jnp.repeat(img_X[..., jnp.newaxis], bs, axis=-1)
+        self.img_Y = jnp.repeat(img_Y[..., jnp.newaxis], bs, axis=-1)
 
         self.numPix = sim_config.num_pix
         self.bs = bs
@@ -59,7 +59,12 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
 
     @functools.partial(jit, static_argnums=(0,))
     def simulate(self, params, no_deflection=False):
-        lens_params, lens_light_params, source_light_params = params
+        lens_params = params[0]
+        lens_light_params, source_light_params = None, None
+        if len(self.phys_model.lens_light) > 0:
+            lens_light_params, source_light_params = params[1], params[2]
+        else:
+            source_light_params = params[1]
         beta_x, beta_y = self._beta(lens_params)
         if no_deflection:
             beta_x, beta_y = self.img_X, self.img_Y
@@ -92,17 +97,25 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         return_coeffs=False,
         no_deflection=False,
     ):
-        lens_params, lens_light_params, source_light_params = params
+        lens_params = params[0]
+        lens_light_params, source_light_params = None, None
+        if len(self.phys_model.lens_light) > 0:
+            lens_light_params, source_light_params = params[1], params[2]
+        else:
+            source_light_params = params[1]
         beta_x, beta_y = self._beta(lens_params)
         if no_deflection:
             beta_x, beta_y = self.img_X, self.img_Y
         img = jnp.zeros((0, *self.img_X.shape))
         for lightModel, p in zip(self.phys_model.lens_light, lens_light_params):
             img = jnp.concatenate(
-                (img, lightModel.light(self.img_X, self.img_Y, **p)[jnp.newaxis,...]), axis=0
+                (img, lightModel.light(self.img_X, self.img_Y, **p)[jnp.newaxis, ...]),
+                axis=0,
             )
         for lightModel, p in zip(self.phys_model.source_light, source_light_params):
-            img = jnp.concatenate((img, lightModel.light(beta_x, beta_y, **p)[jnp.newaxis,...]), axis=0)
+            img = jnp.concatenate(
+                (img, lightModel.light(beta_x, beta_y, **p)[jnp.newaxis, ...]), axis=0
+            )
 
         img = jnp.nan_to_num(img)
         img = jnp.transpose(img, (0, 3, 1, 2))

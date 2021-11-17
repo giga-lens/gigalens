@@ -64,7 +64,12 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
 
     @tf.function
     def simulate(self, params, no_deflection=False):
-        lens_params, lens_light_params, source_light_params = params
+        lens_params = params[0]
+        lens_light_params, source_light_params = [], []
+        if len(self.phys_model.lens_light) > 0:
+            lens_light_params, source_light_params = params[1], params[2]
+        else:
+            source_light_params = params[1]
         beta_x, beta_y = self._beta(lens_params)
         if no_deflection:
             beta_x, beta_y = self.img_X, self.img_Y
@@ -101,7 +106,12 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         return_coeffs=False,
         no_deflection=False,
     ):
-        lens_params, lens_light_params, source_light_params = params
+        lens_params = params[0]
+        lens_light_params, source_light_params = None, None
+        if len(self.phys_model.lens_light) > 0:
+            lens_light_params, source_light_params = params[1], params[2]
+        else:
+            source_light_params = params[1]
         beta_x, beta_y = self._beta(lens_params)
         if no_deflection:
             beta_x, beta_y = self.img_X, self.img_Y

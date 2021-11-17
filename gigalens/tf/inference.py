@@ -40,7 +40,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
                 pbar.set_description(f"Chi Squared: {(np.nanmin(square_err)):.4f}")
         return trial
 
-    def SVI(self, optimizer, start, n_vi=250, num_steps=500, seed=2):
+    def SVI(self, optimizer, start, n_vi=250, init_scales=1e-3, num_steps=500, seed=2):
         tf.random.set_seed(seed)
         lens_sim = gigalens.tf.simulator.LensSimulator(
             self.phys_model,
@@ -48,7 +48,11 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             bs=n_vi,
         )
         start = tf.squeeze(start)
-        scale = np.ones(len(start)).astype(np.float32) * 1e-3
+        scale = (
+            np.ones(len(start)).astype(np.float32) * init_scales
+            if np.size(init_scales) == 1
+            else init_scales
+        )
         q_z = tfd.MultivariateNormalTriL(
             loc=tf.Variable(start),
             scale_tril=tfp.util.TransformedVariable(

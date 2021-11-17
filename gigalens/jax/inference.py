@@ -74,6 +74,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         start,
         optimizer: optax.GradientTransformation,
         n_vi=250,
+        init_scales=1e-3,
         num_steps=500,
         seed=0,
     ):
@@ -85,7 +86,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             self.sim_config,
             bs=n_vi // dev_cnt,
         )
-        scale = jnp.diag(jnp.ones(jnp.size(start))) * 1e-3
+        scale = jnp.diag(jnp.ones(jnp.size(start))) * init_scales if jnp.size(init_scales) == 1 else init_scales
         cov_bij = tfp.bijectors.FillScaleTriL(diag_bijector=tfb.Exp(), diag_shift=1e-6)
         qz_params = jnp.concatenate(
             [jnp.squeeze(start), cov_bij.inverse(scale)], axis=0
