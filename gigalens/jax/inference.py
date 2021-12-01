@@ -52,7 +52,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         loss_and_grad = jax.pmap(jax.value_and_grad(loss, has_aux=True))
 
         def update(params, opt_state):
-            splt_params = jnp.array(jnp.split(params, 4, axis=0))
+            splt_params = jnp.array(jnp.split(params, dev_cnt, axis=0))
             (_, chisq), grads = loss_and_grad(splt_params)
             grads = jnp.concatenate(grads, axis=0)
             chisq = jnp.concatenate(chisq, axis=0)
