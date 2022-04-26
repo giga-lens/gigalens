@@ -19,10 +19,10 @@ class PhysicalModel:
     """
 
     def __init__(
-        self,
-        lenses: List[gigalens.profile.MassProfile],
-        lens_light: List[gigalens.profile.LightProfile],
-        source_light: List[gigalens.profile.LightProfile],
+            self,
+            lenses: List[gigalens.profile.MassProfile],
+            lens_light: List[gigalens.profile.LightProfile],
+            source_light: List[gigalens.profile.LightProfile],
     ):
         self.lenses = lenses
         self.lens_light = lens_light

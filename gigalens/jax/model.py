@@ -1,21 +1,22 @@
+import functools
+
 import numpy as np
+from jax import jit
 from jax import numpy as jnp
 from jax import random
-from jax import jit
-import jax
 from tensorflow_probability.substrates.jax import distributions as tfd, bijectors as tfb
-import functools
+
 import gigalens.jax.simulator as sim
 import gigalens.model
 
 
 class ForwardProbModel(gigalens.model.ProbabilisticModel):
     def __init__(
-        self,
-        prior: tfd.Distribution,
-        observed_image=None,
-        background_rms=None,
-        exp_time=None,
+            self,
+            prior: tfd.Distribution,
+            observed_image=None,
+            background_rms=None,
+            exp_time=None,
     ):
         super(ForwardProbModel, self).__init__(prior)
         self.observed_image = jnp.array(observed_image)
@@ -47,7 +48,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
 
 class BackwardProbModel(gigalens.model.ProbabilisticModel):
     def __init__(
-        self, prior: tfd.Distribution, observed_image, background_rms, exp_time
+            self, prior: tfd.Distribution, observed_image, background_rms, exp_time
     ):
         super(BackwardProbModel, self).__init__(prior)
         err_map = jnp.sqrt(

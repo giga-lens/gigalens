@@ -27,11 +27,11 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
     """
 
     def __init__(
-        self,
-        prior: tfd.Distribution,
-        observed_image=None,
-        background_rms=None,
-        exp_time=None,
+            self,
+            prior: tfd.Distribution,
+            observed_image=None,
+            background_rms=None,
+            exp_time=None,
     ):
         super(ForwardProbModel, self).__init__(prior)
         self.observed_image = tf.constant(observed_image, dtype=tf.float32)
@@ -107,7 +107,7 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
     """
 
     def __init__(
-        self, prior: tfd.Distribution, observed_image, background_rms, exp_time
+            self, prior: tfd.Distribution, observed_image, background_rms, exp_time
     ):
         super(BackwardProbModel, self).__init__(prior)
         err_map = tf.math.sqrt(

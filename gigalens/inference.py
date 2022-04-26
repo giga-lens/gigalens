@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Any, Union
 
 import numpy as np
+
 import gigalens.model
 import gigalens.simulator
 
@@ -20,10 +21,10 @@ class ModellingSequenceInterface(ABC):
     """
 
     def __init__(
-        self,
-        phys_model: gigalens.model.PhysicalModel,
-        prob_model: gigalens.model.ProbabilisticModel,
-        sim_config: gigalens.simulator.SimulatorConfig,
+            self,
+            phys_model: gigalens.model.PhysicalModel,
+            prob_model: gigalens.model.ProbabilisticModel,
+            sim_config: gigalens.simulator.SimulatorConfig,
     ):
         self.phys_model = phys_model
         self.prob_model = prob_model
@@ -31,12 +32,12 @@ class ModellingSequenceInterface(ABC):
 
     @abstractmethod
     def MAP(
-        self,
-        optimizer,
-        start: Optional[Any],
-        n_samples: int,
-        num_steps: int,
-        seed: Optional[Any],
+            self,
+            optimizer,
+            start: Optional[Any],
+            n_samples: int,
+            num_steps: int,
+            seed: Optional[Any],
     ):
         """Finds maximum a posteriori (MAP) estimates for the parameters.
 
@@ -76,15 +77,15 @@ class ModellingSequenceInterface(ABC):
 
     @abstractmethod
     def HMC(
-        self,
-        q_z,
-        init_eps: float,
-        init_l: int,
-        n_hmc: int,
-        num_burnin_steps: int,
-        num_results: int,
-        max_leapfrog_steps: int,
-        seed: Any,
+            self,
+            q_z,
+            init_eps: float,
+            init_l: int,
+            n_hmc: int,
+            num_burnin_steps: int,
+            num_results: int,
+            max_leapfrog_steps: int,
+            seed: Any,
     ):
         """Runs Hamiltonian Monte Carlo (HMC) to draw posterior samples.
 

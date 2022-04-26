@@ -73,15 +73,15 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         return q_z, losses
 
     def HMC(
-        self,
-        q_z,
-        init_eps=0.3,
-        init_l=3,
-        n_hmc=50,
-        num_burnin_steps=250,
-        num_results=750,
-        max_leapfrog_steps=30,
-        seed=3,
+            self,
+            q_z,
+            init_eps=0.3,
+            init_l=3,
+            n_hmc=50,
+            num_burnin_steps=250,
+            num_results=750,
+            max_leapfrog_steps=30,
+            seed=3,
     ):
         def tqdm_progress_bar_fn(num_steps):
             return iter(tqdm(range(num_steps), desc="", leave=True))

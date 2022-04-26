@@ -61,34 +61,34 @@ class CoreSersic(Sersic):
 
     @functools.partial(jit, static_argnums=(0,))
     def light(
-        self,
-        x,
-        y,
-        R_sersic,
-        n_sersic,
-        Rb,
-        alpha,
-        gamma,
-        e1,
-        e2,
-        center_x,
-        center_y,
-        Ie=None,
+            self,
+            x,
+            y,
+            R_sersic,
+            n_sersic,
+            Rb,
+            alpha,
+            gamma,
+            e1,
+            e2,
+            center_x,
+            center_y,
+            Ie=None,
     ):
         Ie = jnp.ones_like(R_sersic) if self.use_lstsq else Ie
         R = self.distance(x, y, center_x, center_y, e1, e2)
         bn = 1.9992 * n_sersic - 0.3271
         result = (
-            Ie
-            * (1 + (Rb / R) ** alpha) ** (gamma / alpha)
-            * jnp.exp(
-                -bn
-                * (
+                Ie
+                * (1 + (Rb / R) ** alpha) ** (gamma / alpha)
+                * jnp.exp(
+            -bn
+            * (
                     (R ** alpha + Rb ** alpha)
                     / R_sersic ** alpha ** 1.0
                     / (alpha * n_sersic)
-                )
-                - 1.0
             )
+            - 1.0
+        )
         )
         return result

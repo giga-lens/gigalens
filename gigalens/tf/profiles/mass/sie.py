@@ -30,14 +30,14 @@ class SIE(gigalens.profile.MassProfile):
         x, y = self._rotate(x, y, phi)
         psi = tf.math.sqrt(q ** 2 * (s ** 2 + x ** 2) + y ** 2)
         fx = (
-            b
-            / tf.math.sqrt(1.0 - q ** 2)
-            * tf.math.atan(tf.math.sqrt(1.0 - q ** 2) * x / (psi + s))
+                b
+                / tf.math.sqrt(1.0 - q ** 2)
+                * tf.math.atan(tf.math.sqrt(1.0 - q ** 2) * x / (psi + s))
         )
         fy = (
-            b
-            / tf.math.sqrt(1.0 - q ** 2)
-            * tf.math.atanh(tf.math.sqrt(1.0 - q ** 2) * y / (psi + q ** 2 * s))
+                b
+                / tf.math.sqrt(1.0 - q ** 2)
+                * tf.math.atanh(tf.math.sqrt(1.0 - q ** 2) * y / (psi + q ** 2 * s))
         )
         fx, fy = self._rotate(fx, fy, -phi)
         return fx, fy

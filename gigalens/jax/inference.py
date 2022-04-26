@@ -1,9 +1,9 @@
 import functools
-import time
 
 import jax.random
 import optax
 import tensorflow_probability.substrates.jax as tfp
+import time
 from jax import jit, pmap
 from jax import numpy as jnp
 from tensorflow_probability.substrates.jax import (
@@ -20,12 +20,12 @@ import gigalens.model
 
 class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
     def MAP(
-        self,
-        optimizer: optax.GradientTransformation,
-        start=None,
-        n_samples=500,
-        num_steps=350,
-        seed=0,
+            self,
+            optimizer: optax.GradientTransformation,
+            start=None,
+            n_samples=500,
+            num_steps=350,
+            seed=0,
     ):
         dev_cnt = jax.device_count()
         n_samples = (n_samples // dev_cnt) * dev_cnt
@@ -62,21 +62,21 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             return chisq, new_params, opt_state
 
         with trange(num_steps) as pbar:
-            for step in pbar:
+            for _ in pbar:
                 loss, params, opt_state = update(params, opt_state)
                 pbar.set_description(
-                    f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True).to_py()):.3f}"
+                    f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True)):.3f}"
                 )
         return params
 
     def SVI(
-        self,
-        start,
-        optimizer: optax.GradientTransformation,
-        n_vi=250,
-        init_scales=1e-3,
-        num_steps=500,
-        seed=0,
+            self,
+            start,
+            optimizer: optax.GradientTransformation,
+            n_vi=250,
+            init_scales=1e-3,
+            num_steps=500,
+            seed=0,
     ):
         dev_cnt = jax.device_count()
         seeds = jax.random.split(jax.random.PRNGKey(seed), dev_cnt)
@@ -86,7 +86,11 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             self.sim_config,
             bs=n_vi // dev_cnt,
         )
-        scale = jnp.diag(jnp.ones(jnp.size(start))) * init_scales if jnp.size(init_scales) == 1 else init_scales
+        scale = (
+            jnp.diag(jnp.ones(jnp.size(start))) * init_scales
+            if jnp.size(init_scales) == 1
+            else init_scales
+        )
         cov_bij = tfp.bijectors.FillScaleTriL(diag_bijector=tfb.Exp(), diag_shift=1e-6)
         qz_params = jnp.concatenate(
             [jnp.squeeze(start), cov_bij.inverse(scale)], axis=0
@@ -117,7 +121,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         with trange(num_steps) as pbar:
             for step in pbar:
                 loss, (grads,) = get_update(replicated_params, seeds)
-                loss = float(jnp.mean(loss).to_py())
+                loss = float(jnp.mean(loss))
                 seeds = jax.random.split(seeds[0], dev_cnt)
                 updates, opt_state = optimizer.update(grads, opt_state)
                 replicated_params = optax.apply_updates(replicated_params, updates)
@@ -129,15 +133,15 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
         return qz, loss_hist
 
     def HMC(
-        self,
-        q_z,
-        init_eps=0.3,
-        init_l=3,
-        n_hmc=50,
-        num_burnin_steps=250,
-        num_results=750,
-        max_leapfrog_steps=30,
-        seed=0,
+            self,
+            q_z,
+            init_eps=0.3,
+            init_l=3,
+            n_hmc=50,
+            num_burnin_steps=250,
+            num_results=750,
+            max_leapfrog_steps=30,
+            seed=0,
     ):
         dev_cnt = jax.device_count()
         seeds = jax.random.split(jax.random.PRNGKey(seed), dev_cnt)

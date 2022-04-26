@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import List
 
 
@@ -33,7 +32,7 @@ class LightProfile(Parameterized, ABC):
     """
 
     def __init__(self, use_lstsq=False, *args, **kwargs):
-        super(LightProfile, self).__init__(self, *args, **kwargs)
+        super(LightProfile, self).__init__(*args, **kwargs)
         self._use_lstsq = use_lstsq
         if self.use_lstsq:
             self.params.append("amp")

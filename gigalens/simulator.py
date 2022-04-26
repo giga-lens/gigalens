@@ -42,10 +42,10 @@ class LensSimulatorInterface(ABC):
     """
 
     def __init__(
-        self,
-        phys_model: gigalens.model.PhysicalModel,
-        sim_config: SimulatorConfig,
-        bs: int,
+            self,
+            phys_model: gigalens.model.PhysicalModel,
+            sim_config: SimulatorConfig,
+            bs: int,
     ):
         self.phys_model = phys_model
         self.sim_config = sim_config
@@ -53,8 +53,8 @@ class LensSimulatorInterface(ABC):
 
     @abstractmethod
     def simulate(
-        self,
-        params: Tuple[List[Dict], List[Dict], List[Dict]],
+            self,
+            params: Tuple[List[Dict], List[Dict], List[Dict]],
     ):
         """Simulates lenses with physical parameters ``params``.
 
@@ -69,10 +69,10 @@ class LensSimulatorInterface(ABC):
 
     @abstractmethod
     def lstsq_simulate(
-        self,
-        params: Tuple[List[Dict], List[Dict], List[Dict]],
-        observed_image,
-        err_map,
+            self,
+            params: Tuple[List[Dict], List[Dict], List[Dict]],
+            observed_image,
+            err_map,
     ):
         """Simulates lenses and fits for their linear parameters based on the observed data.
 
@@ -90,7 +90,7 @@ class LensSimulatorInterface(ABC):
 
     @staticmethod
     def get_coords(
-        supersample: int, num_pix: int, transform_pix2angle: np.array
+            supersample: int, num_pix: int, transform_pix2angle: np.array
     ) -> Tuple[float, float, np.array, np.array]:
         """
         Calculates the coordinate grid for the given simulator settings.  The default coordinate system in this package

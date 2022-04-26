@@ -20,13 +20,12 @@ test_deps = [
 
 extras = {
     "test": test_deps,
-    "jax": ["jax==0.2.25", "optax==0.0.9", "objax==1.4.0"],
+    "jax": ["jax==0.2.24", "optax==0.0.9", "objax==1.4.0"],
 }
 
 setup(
     name="gigalens",
     version="0.1.0",
-    # url="https://github.com/kragniz/cookiecutter-pypackage-minimal",
     license="MIT",
     author="Andi Gu",
     author_email="andi.gu@berkeley.edu",
@@ -34,8 +33,8 @@ setup(
     long_description=read("README.rst"),
     packages=find_packages(exclude=("tests",)),
     install_requires=[
-        "tensorflow ~= 2.6.0",
-        "tensorflow-probability==0.14.1",
+        "tensorflow ~= 2.7.0",
+        "tensorflow-probability==0.15.0",
         "lenstronomy >= 1.9.1",
         "matplotlib >= 3.2.2",
         "scikit-image>=0.16.2",

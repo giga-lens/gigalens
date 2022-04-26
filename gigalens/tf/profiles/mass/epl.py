@@ -17,7 +17,7 @@ class EPL(gigalens.profile.MassProfile):
     _params = ["theta_E", "gamma", "e1", "e2", "center_x", "center_y"]
 
     def __init__(self, niter=50):
-        super().__init__(self)
+        super().__init__()
         self.niter = niter
 
     @tf.function
@@ -44,7 +44,7 @@ class EPL(gigalens.profile.MassProfile):
             last_x, last_y, f_x, f_y = p
             prefac = -f * (2 * n - (2 - t)) / (2 * n + (2 - t))
             last_x, last_y = prefac * (Cs2 * last_x - Ss2 * last_y), prefac * (
-                Ss2 * last_x + Cs2 * last_y
+                    Ss2 * last_x + Cs2 * last_y
             )
             return n + 1, (last_x, last_y, f_x + last_x, f_y + last_y)
 

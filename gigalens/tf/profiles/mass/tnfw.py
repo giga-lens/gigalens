@@ -23,14 +23,14 @@ class TNFW(gigalens.profile.MassProfile):
         L = tf.math.log(x / (tau + tf.math.sqrt(tau ** 2 + x ** 2)))
         F = self.F(x)
         gx = (
-            (tau ** 2)
-            / (tau ** 2 + 1) ** 2
-            * (
-                (tau ** 2 + 1 + 2 * (x ** 2 - 1)) * F
-                + tau * np.pi
-                + (tau ** 2 - 1) * tf.math.log(tau)
-                + tf.math.sqrt(tau ** 2 + x ** 2) * (-np.pi + L * (tau ** 2 - 1) / tau)
-            )
+                (tau ** 2)
+                / (tau ** 2 + 1) ** 2
+                * (
+                        (tau ** 2 + 1 + 2 * (x ** 2 - 1)) * F
+                        + tau * np.pi
+                        + (tau ** 2 - 1) * tf.math.log(tau)
+                        + tf.math.sqrt(tau ** 2 + x ** 2) * (-np.pi + L * (tau ** 2 - 1) / tau)
+                )
         )
         a = 4 * rho0 * Rs * gx / x ** 2
         return a * dx, a * dy

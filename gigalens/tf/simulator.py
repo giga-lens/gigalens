@@ -9,10 +9,10 @@ import gigalens.simulator
 
 class LensSimulator(gigalens.simulator.LensSimulatorInterface):
     def __init__(
-        self,
-        phys_model: gigalens.model.PhysicalModel,
-        sim_config: gigalens.simulator.SimulatorConfig,
-        bs: int,
+            self,
+            phys_model: gigalens.model.PhysicalModel,
+            sim_config: gigalens.simulator.SimulatorConfig,
+            bs: int,
     ):
         super(LensSimulator, self).__init__(phys_model, sim_config, bs)
         self.supersample = int(sim_config.supersample)
@@ -98,13 +98,13 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
 
     @tf.function
     def lstsq_simulate(
-        self,
-        params,
-        observed_image,
-        err_map,
-        return_stacked=False,
-        return_coeffs=False,
-        no_deflection=False,
+            self,
+            params,
+            observed_image,
+            err_map,
+            return_stacked=False,
+            return_coeffs=False,
+            no_deflection=False,
     ):
         lens_params = params[0]
         lens_light_params, source_light_params = None, None
