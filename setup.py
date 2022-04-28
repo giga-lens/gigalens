@@ -26,12 +26,13 @@ extras = {
 
 setup(
     name="gigalens",
-    version="0.1.21",
+    version="0.1.0",
     license="MIT",
     author="Andi Gu",
     author_email="andi.gu@berkeley.edu",
     description="Fast strong gravitational lens modeling",
     long_description=read("README.rst"),
+    long_description_content_type='text/x-rst',
     packages=find_namespace_packages(where='src'),
     package_dir={"": "src"},
     package_data={'': ['*.npy']},
