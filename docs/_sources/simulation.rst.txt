@@ -72,3 +72,8 @@ The Sersic profiles are well-tested implementations.
 
 .. automodule:: gigalens.tf.profiles.light.sersic
     :members:
+
+Shapelets are a more flexible light model using a Hermite polynomial basis. They have recently been introduced and are less extensively tested.
+
+.. automodule:: gigalens.tf.profiles.light.shapelets
+    :members:

@@ -2,7 +2,7 @@ import io
 import os
 import re
 
-from setuptools import find_packages
+from setuptools import find_packages, find_namespace_packages
 from setuptools import setup
 
 
@@ -23,32 +23,33 @@ extras = {
     "jax": ["jax==0.2.24", "optax==0.0.9", "objax==1.4.0"],
 }
 
+
 setup(
     name="gigalens",
-    version="0.1.0",
+    version="0.1.21",
     license="MIT",
     author="Andi Gu",
     author_email="andi.gu@berkeley.edu",
     description="Fast strong gravitational lens modeling",
     long_description=read("README.rst"),
-    packages=find_packages(exclude=("tests",)),
+    packages=find_namespace_packages(where='src'),
+    package_dir={"": "src"},
+    package_data={'': ['*.npy']},
+    # include_package_data=True,
     install_requires=[
-        "tensorflow ~= 2.7.0",
-        "tensorflow-probability==0.15.0",
-        "lenstronomy >= 1.9.1",
-        "matplotlib >= 3.2.2",
-        "scikit-image>=0.16.2",
-        "cosmohammer >= 0.6.1",
-        "schwimmbad >= 0.3.2",
-        "dynesty >= 1.1",
-        "corner >= 2.2.1",
+        "tensorflow>=2.6.0",
+        "tensorflow-probability>=0.15.0",
+        "lenstronomy==1.9.3",
+        "scikit-image==0.18.2",
+        "cosmohammer==0.6.1",
+        "schwimmbad==0.3.2",
+        "dynesty==1.1",
+        "corner==2.2.1",
         "mpmath==1.2.1",
-        "PyYaml >= 6.0",
-        "numpy==1.19.5",
-        "tqdm~=4.62.0",
+        "tqdm==4.62.0",
     ],
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.7",
     ],
