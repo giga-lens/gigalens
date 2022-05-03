@@ -1,14 +1,10 @@
 import numpy as np
-import pytest
 import tensorflow as tf
-from tensorflow_probability import distributions as tfd
 
-from gigalens.tf.model import ForwardProbModel
 from gigalens.model import PhysicalModel
-from gigalens.tf.profiles.mass import epl, shear
-from gigalens.tf.profiles.light import sersic
-from gigalens.tf.inference import ModellingSequence
 from gigalens.simulator import SimulatorConfig
+from gigalens.tf.inference import ModellingSequence
+from gigalens.tf.model import ForwardProbModel
 
 
 def test_bij(default_prior):

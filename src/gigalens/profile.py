@@ -34,6 +34,7 @@ class LightProfile(Parameterized, ABC):
     def __init__(self, use_lstsq=False, *args, **kwargs):
         super(LightProfile, self).__init__(*args, **kwargs)
         self._use_lstsq = use_lstsq
+        self.depth = 1
         if self.use_lstsq:
             self.params.append("amp")
 

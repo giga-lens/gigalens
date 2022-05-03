@@ -11,8 +11,9 @@ class ModellingSequenceInterface(ABC):
     """Defines the three steps in modelling:
 
     1. Multi-starts gradient descent to find the maximum a posteriori (MAP) estimate. See :cite:t:`marti2003,gyorgy2011`.
-    2. VI using the MAP as a starting point. See :cite:t:`hoffman2013,blei2017`.
-    3. HMC using the inverse of the VI covariance matrix as the mass matrix :math:`M`. See :cite:t:`duan1987a, neal2012a`.
+    2. Variational inference (VI) using the MAP as a starting point. See :cite:t:`hoffman2013,blei2017`. Note that the implementation of variational inference
+        is stochastic variational inference, so VI and SVI are interchangeable.
+    3. Hamiltonian Monte Carlo (HMC) using the inverse of the VI covariance matrix as the mass matrix :math:`M`. See :cite:t:`duan1987a, neal2012a`.
 
     Args:
         phys_model (:obj:`~gigalens.model.PhysicalModel`): The physical model of the lensing system that we want to fit
@@ -39,7 +40,7 @@ class ModellingSequenceInterface(ABC):
             num_steps: int,
             seed: Optional[Any],
     ):
-        """Finds maximum a posteriori (MAP) estimates for the parameters.
+        """Finds maximum a posteriori (MAP) estimates for the parameters. See Section 2.3 in `our paper <https://arxiv.org/abs/2202.07663>`__.
 
         Args:
             optimizer: An optimizer object with which to run MAP. Adam or variants thereof are recommended, using a
@@ -58,7 +59,10 @@ class ModellingSequenceInterface(ABC):
     @abstractmethod
     def SVI(self, optimizer, start, n_vi: int, num_steps: int, init_scales: Union[float, np.array], seed: Any):
         """Runs stochastic variational inference (SVI) to characterize the posterior scales. Currently, only
-        multi-variate Gaussian ansatz is supported.
+        multi-variate Gaussian ansatz is supported. Note that the implementation of variational inference
+        is stochastic variational inference, so VI and SVI are interchangeable. This is roughly equivalent to
+        taking the Hessian of the log posterior at the MAP, however, in our experience, the Hessian can become unstable
+        in high dimensions (i.e., very small eigenvalues). See Section 2.4 in `our paper <https://arxiv.org/abs/2202.07663>`__.
 
         Args:
             optimizer: An optimizer with which to minimize the ELBO loss. Adam or variants thereof are recommended,
@@ -67,7 +71,7 @@ class ModellingSequenceInterface(ABC):
                 Convention is that it is in unconstrained parameter space.
             n_vi (int): Number of samples with which to approximate the ELBO loss
             num_steps (int): Number of optimization steps
-            init_scales (float or :obj:np.array): Initial VI standard deviation guess
+            init_scales (float or :obj:`np.array`): Initial VI standard deviation guess
             seed: A random seed for drawing samples from the posterior ansatz
 
         Returns:
@@ -87,12 +91,12 @@ class ModellingSequenceInterface(ABC):
             max_leapfrog_steps: int,
             seed: Any,
     ):
-        """Runs Hamiltonian Monte Carlo (HMC) to draw posterior samples.
+        """Runs Hamiltonian Monte Carlo (HMC) to draw posterior samples. See Section 2.5 in `our paper <https://arxiv.org/abs/2202.07663>`__.
 
         Args:
             q_z: Fitted posterior from SVI. Used to calculate the mass matrix :math:`M` for preconditioned HMC.
                 Convention is that ``q_z`` is an approximation of the *unconstrained* posterior.
-            init_eps (float): Initial step size :math::`\epsilon`
+            init_eps (float): Initial step size :math:`\epsilon`
             init_l (int): Initial number of leapfrog steps :math:`L`
             n_hmc (int): Number of HMC chains to run in parallel
             num_burnin_steps (int): Number of burn-in steps

@@ -2,10 +2,10 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Lens Simulation" href="simulation.html" /><link rel="prev" title="Philosophy" href="philosophy.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Lens Simulation" href="simulation.html" /><link rel="prev" title="Overview" href="overview.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
-        <title>Model Specification - GIGALens documentation</title>
+        <title>Model Specification - GIGA-Lens documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">GIGALens  documentation</div></a>
+      <a href="index.html"><div class="brand">GIGA-Lens  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">GIGALens  documentation</span>
+  <span class="sidebar-brand-text">GIGA-Lens  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -155,7 +155,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
@@ -199,9 +199,9 @@ a model ought to be a ‘story for how the observed data was generated’. A mod
 lensing system is comprised of two components:</p>
 <blockquote>
 <div><ol class="loweralpha simple">
-<li><p>A parameterized physical model for the lensing system. This is a model for the mass profile of the main lens,
-potentially a model the effects of any nearby interlopers, and a model for the light of both
-the lens and source.</p></li>
+<li><p>A parameterized physical model for the lensing system, consisting of a model for the mass profile of the main
+lens, potentially a model for the effects of any nearby interlopers, and a model for the light of both the lens
+and source.</p></li>
 <li><p>A probabilistic model, that consists of a prior for the physical parameters, as well as
 a likelihood function. Defining a likelihood requires a noise model, which for most purposes
 will consist of modeling the noise on a given pixel as the independent sum of background Gaussian
@@ -210,7 +210,7 @@ with exposure time <span class="math notranslate nohighlight">\(t_{exp}\)</span>
 </ol>
 </div></blockquote>
 <p>Although these two components of the model are not completely separate (since the prior in the
-probabilistic model is for parameters defined by the physical model), they are mostly decoupled.
+probabilistic model is for parameters defined by the physical model), they are decoupled.
 Therefore, in our implementation, we are careful to keep these two components of the model distinct.
 The following are our package’s high level descriptions for a physical and probabilistic model.</p>
 <span class="target" id="module-gigalens.model"></span><dl class="py class">
@@ -296,8 +296,8 @@ The following are our package’s high level descriptions for a physical and pro
 </dd></dl>
 <div class="section" id="prior-specification">
 <h2>Prior Specification<a class="headerlink" href="#prior-specification" title="Permalink to this headline">#</a></h2>
-<p>Once the physical model for the lens is settled, the next step is to specify the prior. If our model
-is comprised of an EPL + Shear for the mass model, 2 Sersic’s for the lens light, and 1
+<p>Once the physical model for the lens is settled, the next step is to specify the prior. For example,
+if our model is comprised of an SIS + Shear for the mass model, 2 Sersic’s for the lens light, and 1
 Sersic for the source light, the prior might look like the following:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 <span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">tensorflow_probability</span> <span class="kn">import</span> <span class="n">distributions</span> <span class="k">as</span> <span class="n">tfd</span>
@@ -358,8 +358,8 @@ Sersic for the source light, the prior might look like the following:</p>
 <span class="linenos">57</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Although this may appear complex at first, the length is only due to the fact that
-the model has 20 parameters, each of which must have a prior distribution specified.
+<p>Note that this is a different model than the one used in our paper. Although this may appear
+complex at first, the length is only due to the fact that the model has 20 parameters, each of which must have a prior distribution specified.
 All this says is the prior distribution is the product of independent distributions,
 that begins with <span class="math notranslate nohighlight">\(\theta_E \sim \mathcal{N}(1.5, 0.25)\)</span> and ends with
 <span class="math notranslate nohighlight">\(I_{e,src} \sim \mathcal{N}(150.0, 0.5)\)</span>. This way of defining the prior is very
@@ -369,7 +369,7 @@ with functions:</p>
 <span class="linenos">2</span>   <span class="nb">dict</span><span class="p">(</span>
 <span class="linenos">3</span>       <span class="n">theta_E</span><span class="o">=</span><span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span>
 <span class="linenos">4</span>       <span class="n">center_x</span><span class="o">=</span><span class="k">lambda</span> <span class="n">theta_E</span><span class="p">:</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">theta_E</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
-<span class="linenos">5</span>       <span class="n">center_y</span><span class="o">=</span><span class="k">lambda</span> <span class="n">theta_E</span><span class="p">,</span> <span class="n">center_x</span><span class="p">:</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">theta_E</span><span class="p">,</span> <span class="n">center_y</span><span class="p">),</span>
+<span class="linenos">5</span>       <span class="n">center_y</span><span class="o">=</span><span class="k">lambda</span> <span class="n">theta_E</span><span class="p">,</span> <span class="n">center_x</span><span class="p">:</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">theta_E</span><span class="p">,</span> <span class="n">center_x</span><span class="p">),</span>
 <span class="linenos">6</span>   <span class="p">)</span>
 <span class="linenos">7</span><span class="p">)</span>
 </pre></div>
@@ -378,11 +378,11 @@ with functions:</p>
 <div class="math-wrapper"><div class="math notranslate nohighlight">
 \[\begin{split}\theta_E \sim \mathcal{N}(1.5,0.25) \\
 x \sim \mathcal{N}(\theta_E,0.25) \\
-y \sim \mathcal{N}(\theta_E,y) \\\end{split}\]</div></div>
+y \sim \mathcal{N}(\theta_E,x) \\\end{split}\]</div></div>
 <p>Obviously, this is a completely silly prior, but demonstrates the flexibility of the
 <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/distributions/JointDistribution" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.distributions.JointDistribution</span></code></a> interface.</p>
 <p>Sampling from the prior will produce samples that have an identical structure to the prior.
-Sampling from the example prior might give something like:</p>
+Sampling twice from the example prior might give something like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">[</span>
 <span class="linenos"> 2</span>    <span class="p">[</span>
 <span class="linenos"> 3</span>        <span class="p">{</span>
@@ -438,10 +438,207 @@ this still outputs a list of tensors, when ideally we would like to concatenate 
 This can be done with <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Split</span></code></a>, but this will completely flatten the parameters into a length
 <code class="docutils literal notranslate"><span class="pre">bs*d</span></code> vector. We reshape using the remaining two transforms (<a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Reshape" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Reshape</span></code></a> and
 <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Transpose" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Transpose</span></code></a>). Typically, we will use <code class="docutils literal notranslate"><span class="pre">z</span></code> to denote this flattened, unconstrained vector.
-Due to our use of <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Split</span></code></a>, the <code class="xref py py-func docutils literal notranslate"><span class="pre">gigalens.tf.model.ForwardProbModel.log_prob()</span></code> method
-and <code class="xref py py-func docutils literal notranslate"><span class="pre">gigalens.tf.model.BackwardProbModel.log_prob()</span></code> both expect a rank-2 Tensor <code class="docutils literal notranslate"><span class="pre">z</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(bs,d)</span></code>.
+Due to our use of <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Split</span></code></a>, the <a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.log_prob" title="gigalens.tf.model.ForwardProbModel.log_prob"><code class="xref py py-func docutils literal notranslate"><span class="pre">gigalens.tf.model.ForwardProbModel.log_prob()</span></code></a> method
+and <a class="reference internal" href="#gigalens.tf.model.BackwardProbModel.log_prob" title="gigalens.tf.model.BackwardProbModel.log_prob"><code class="xref py py-func docutils literal notranslate"><span class="pre">gigalens.tf.model.BackwardProbModel.log_prob()</span></code></a> both expect a rank-2 Tensor <code class="docutils literal notranslate"><span class="pre">z</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(bs,d)</span></code>.
 If you are looking to evaluate the log density for just one example, you must expand the first dimension so it has
 shape <cite>(1,d)</cite>.</p>
+<span class="target" id="module-gigalens.tf.model"></span><dl class="py class">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.model.</span></span><span class="sig-name descname"><span class="pre">ForwardProbModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_image</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_rms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/model.html#ForwardProbModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel" title="Permalink to this definition">#</a></dt>
+<dd><p>Probabilistic model defined using the simulated image as an estimator for the noise variance map. Linear parameters
+<em>are not</em> automatically solved for using least squares.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.observed_image">
+<span class="sig-name descname"><span class="pre">observed_image</span></span><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.observed_image" title="Permalink to this definition">#</a></dt>
+<dd><p>The observed image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/api_docs/python/tf/Tensor" title="(in TensorFlow v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tf.Tensor</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.background_rms">
+<span class="sig-name descname"><span class="pre">background_rms</span></span><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.background_rms" title="Permalink to this definition">#</a></dt>
+<dd><p>The estimated background Gaussian noise level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.exp_time">
+<span class="sig-name descname"><span class="pre">exp_time</span></span><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.exp_time" title="Permalink to this definition">#</a></dt>
+<dd><p>The exposure time (used for calculating Poisson shot noise)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.pack_bij">
+<span class="sig-name descname"><span class="pre">pack_bij</span></span><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.pack_bij" title="Permalink to this definition">#</a></dt>
+<dd><p>A bijector that reshapes from a tensor to a structured parameter
+object (i.e., dictionaries of parameter values). Does not change the input parameters whatsoever, it only
+reshapes them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Bijector" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Bijector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.unconstraining_bij">
+<span class="sig-name descname"><span class="pre">unconstraining_bij</span></span><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.unconstraining_bij" title="Permalink to this definition">#</a></dt>
+<dd><p>A bijector that maps from physical parameter space to
+unconstrained parameter space. Outputs an identical structure as the input, only maps values to
+unconstrained space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Bijector" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Bijector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.bij">
+<span class="sig-name descname"><span class="pre">bij</span></span><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.bij" title="Permalink to this definition">#</a></dt>
+<dd><p>The composition of <a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.pack_bij" title="gigalens.tf.model.ForwardProbModel.pack_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pack_bij</span></code></a> and
+<a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.unconstraining_bij" title="gigalens.tf.model.ForwardProbModel.unconstraining_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unconstraining_bij</span></code></a>. The inverse method of <code class="docutils literal notranslate"><span class="pre">bij</span></code> will
+unconstrain parameter values and then flatten the entire structure into one tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Bijector" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Bijector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gigalens.tf.model.ForwardProbModel.log_prob">
+<span class="sig-name descname"><span class="pre">log_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">gigalens.tf.simulator.LensSimulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/model.html#ForwardProbModel.log_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.model.ForwardProbModel.log_prob" title="Permalink to this definition">#</a></dt>
+<dd><p>Evaluate the reparameterized log posterior density for a batch of unconstrained lens parameters <code class="docutils literal notranslate"><span class="pre">z</span></code>.
+Simulates the lenses with parameters <code class="docutils literal notranslate"><span class="pre">z</span></code> to evaluate the log likelihood. The log prior is calculated by
+calculating the log prior in physical parameter space and adding the log determinant of the Jacobian.</p>
+<p class="rubric">Notes</p>
+<p>The log determinant for the default bijector will output a scalar regardless of the batch size of <code class="docutils literal notranslate"><span class="pre">z</span></code> due
+to the flattening behavior of <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Split</span></code></a>. To get around this, we use the fact that
+<a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.pack_bij" title="gigalens.tf.model.ForwardProbModel.pack_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pack_bij</span></code></a> has determinant 1 (it simply reshapes/restructures the
+input), and the determinant comes purely from
+<a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.unconstraining_bij" title="gigalens.tf.model.ForwardProbModel.unconstraining_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unconstraining_bij</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">LensSimulator</span></code>) – A simulator object that has the same batch size
+as <code class="docutils literal notranslate"><span class="pre">z</span></code>.</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://www.tensorflow.org/api_docs/python/tf/Tensor" title="(in TensorFlow v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tf.Tensor</span></code></a>) – Parameters in unconstrained space with shape <code class="docutils literal notranslate"><span class="pre">(bs,</span> <span class="pre">d)</span></code>, where <code class="docutils literal notranslate"><span class="pre">bs</span></code> is the batch
+size and <code class="docutils literal notranslate"><span class="pre">d</span></code> is the number of parameters per lens.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The reparameterized log posterior density, with shape <code class="docutils literal notranslate"><span class="pre">(bs,)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.model.</span></span><span class="sig-name descname"><span class="pre">BackwardProbModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_rms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/model.html#BackwardProbModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel" title="Permalink to this definition">#</a></dt>
+<dd><p>Probabilistic model defined using the observed image as an estimator for the noise variance map. Linear parameters
+<em>are</em> automatically solved for using least squares.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.observed_image">
+<span class="sig-name descname"><span class="pre">observed_image</span></span><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.observed_image" title="Permalink to this definition">#</a></dt>
+<dd><p>The observed image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/api_docs/python/tf/Tensor" title="(in TensorFlow v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tf.Tensor</span></code></a> or <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.22)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.background_rms">
+<span class="sig-name descname"><span class="pre">background_rms</span></span><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.background_rms" title="Permalink to this definition">#</a></dt>
+<dd><p>The estimated background Gaussian noise level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.exp_time">
+<span class="sig-name descname"><span class="pre">exp_time</span></span><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.exp_time" title="Permalink to this definition">#</a></dt>
+<dd><p>The exposure time (used for calculating Poisson shot noise)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.pack_bij">
+<span class="sig-name descname"><span class="pre">pack_bij</span></span><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.pack_bij" title="Permalink to this definition">#</a></dt>
+<dd><p>A bijector that reshapes from a tensor to a structured parameter
+object (i.e., dictionaries of parameter values). Does not change the input parameters whatsoever, it only
+reshapes them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Bijector" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Bijector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.unconstraining_bij">
+<span class="sig-name descname"><span class="pre">unconstraining_bij</span></span><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.unconstraining_bij" title="Permalink to this definition">#</a></dt>
+<dd><p>A bijector that maps from physical parameter space to
+unconstrained parameter space. Outputs an identical structure as the input, only maps values to
+unconstrained space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Bijector" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Bijector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.bij">
+<span class="sig-name descname"><span class="pre">bij</span></span><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.bij" title="Permalink to this definition">#</a></dt>
+<dd><p>The composition of <a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.pack_bij" title="gigalens.tf.model.ForwardProbModel.pack_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pack_bij</span></code></a> and
+<a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.unconstraining_bij" title="gigalens.tf.model.ForwardProbModel.unconstraining_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unconstraining_bij</span></code></a>. The inverse method of <code class="docutils literal notranslate"><span class="pre">bij</span></code> will
+unconstrain parameter values and then flatten the entire structure into one tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Bijector" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Bijector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gigalens.tf.model.BackwardProbModel.log_prob">
+<span class="sig-name descname"><span class="pre">log_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simulator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">gigalens.tf.simulator.LensSimulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/model.html#BackwardProbModel.log_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.model.BackwardProbModel.log_prob" title="Permalink to this definition">#</a></dt>
+<dd><p>Evaluate the reparameterized log posterior density for a batch of unconstrained lens parameters <code class="docutils literal notranslate"><span class="pre">z</span></code>.
+Simulates the lenses with parameters <code class="docutils literal notranslate"><span class="pre">z</span></code> (using least squares to solve for linear light parameters) to
+evaluate the log likelihood. The log prior is calculated by  calculating the log prior in physical parameter
+space and adding the log determinant of the Jacobian.</p>
+<p class="rubric">Notes</p>
+<p>The log determinant for the default bijector will output a scalar regardless of the batch size of <code class="docutils literal notranslate"><span class="pre">z</span></code> due
+to the flattening behavior of <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.bijectors.Split</span></code></a>. To get around this, we use the fact that
+<a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.pack_bij" title="gigalens.tf.model.ForwardProbModel.pack_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pack_bij</span></code></a> has determinant 1 (it simply reshapes/restructures the
+input), and the determinant comes purely from
+<a class="reference internal" href="#gigalens.tf.model.ForwardProbModel.unconstraining_bij" title="gigalens.tf.model.ForwardProbModel.unconstraining_bij"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unconstraining_bij</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">LensSimulator</span></code>) – A simulator object that has the same batch size
+as <code class="docutils literal notranslate"><span class="pre">z</span></code>.</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://www.tensorflow.org/api_docs/python/tf/Tensor" title="(in TensorFlow v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tf.Tensor</span></code></a>) – Parameters in unconstrained space with shape <code class="docutils literal notranslate"><span class="pre">(bs,</span> <span class="pre">d)</span></code>, where <code class="docutils literal notranslate"><span class="pre">bs</span></code> is the batch
+size and <code class="docutils literal notranslate"><span class="pre">d</span></code> is the number of parameters per lens.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The reparameterized log posterior density, with shape <code class="docutils literal notranslate"><span class="pre">(bs,)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
 </details><details class="summary-jax-implementation">
 <summary>JAX Implementation</summary><p>Since the JAX integration with TPF is still mostly experimental, it seems <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/substrates/jax/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.substrates.jax.bijectors.Split</span></code></a>
 does not work well with traced JAX arrays (which JAX uses with JIT-compiled functions). Therefore, the parameters
@@ -469,14 +666,14 @@ of the determinant of the bijector Jacobian.</p>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="philosophy.html">
+          <a class="prev-page" href="overview.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Philosophy</div>
+                <div class="title">Overview</div>
                 
               </div>
             </a>

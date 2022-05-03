@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
-        <title>gigalens.simulator - GIGALens documentation</title>
+        <title>gigalens.simulator - GIGA-Lens documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">GIGALens  documentation</div></a>
+      <a href="../../index.html"><div class="brand">GIGA-Lens  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">GIGALens  documentation</span>
+  <span class="sidebar-brand-text">GIGA-Lens  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -155,7 +155,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model-spec.html">Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulation.html">Lens Simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model-pipeline.html">Modelling Pipeline</a></li>
@@ -208,7 +208,7 @@
     <span class="sd">"""Holds parameters for simulation.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        delta_pix (float): The pixel scale (i.e., the angular resolution between adjacent pixels)</span>
+<span class="sd">        delta_pix (float): The pixel scale (i.e., the angular resolution)</span>
 <span class="sd">        num_pix (int): The width of the simulated image in pixels.</span>
 <span class="sd">        supersample (int): Supersampling factor</span>
 <span class="sd">        kernel (:obj:`numpy.array`, optional): The point spread function with which to convolve simulated images</span>
@@ -278,7 +278,7 @@
 <span class="sd">            err_map: Noise variance map, needed for solving the linear parameters</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Simulated images that have the linear parameters set to the optimal values, minimizing the chi-squared</span>
+<span class="sd">            Simulated images that have the linear parameters set to the optimal values, minimizing the :math:`\chi^2`</span>
 <span class="sd">            of the residual using ``err_map`` as the variance.</span>
 <span class="sd">        """</span>
         <span class="k">pass</span></div>
@@ -298,7 +298,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple containing the RA and DEC at the (0,0) index of the coordinate grid (i.e., the bottom left corner),</span>
-<span class="sd">            and the coordinate grids themselves.</span>
+<span class="sd">            and the coordinate grids (in units of arcseconds) themselves.</span>
 <span class="sd">        """</span>
         <span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">supersample</span> <span class="o">*</span> <span class="n">num_pix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">lo</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lo</span><span class="p">))</span>

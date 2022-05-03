@@ -13,7 +13,7 @@ class SimulatorConfig:
     """Holds parameters for simulation.
 
     Attributes:
-        delta_pix (float): The pixel scale (i.e., the angular resolution between adjacent pixels)
+        delta_pix (float): The pixel scale (i.e., the angular resolution)
         num_pix (int): The width of the simulated image in pixels.
         supersample (int): Supersampling factor
         kernel (:obj:`numpy.array`, optional): The point spread function with which to convolve simulated images
@@ -83,7 +83,7 @@ class LensSimulatorInterface(ABC):
             err_map: Noise variance map, needed for solving the linear parameters
 
         Returns:
-            Simulated images that have the linear parameters set to the optimal values, minimizing the chi-squared
+            Simulated images that have the linear parameters set to the optimal values, minimizing the :math:`\chi^2`
             of the residual using ``err_map`` as the variance.
         """
         pass
@@ -103,7 +103,7 @@ class LensSimulatorInterface(ABC):
 
         Returns:
             A tuple containing the RA and DEC at the (0,0) index of the coordinate grid (i.e., the bottom left corner),
-            and the coordinate grids themselves.
+            and the coordinate grids (in units of arcseconds) themselves.
         """
         lo = np.arange(0, supersample * num_pix, dtype=np.float32)
         lo = np.min(lo - np.mean(lo))

@@ -1,4 +1,4 @@
-Philosophy
+Overview
 ====================================
 
 
@@ -18,6 +18,6 @@ Although the two implementations are fundamentally identical, there are some sma
 The most significant is that the unconstraining bijector used in the JAX implementation is not
 able to fully flatten unconstrained parameters into a JAX array. This seems to be due to limited
 support for :obj:`tfp.substrates.jax.bijectors.Split`, and this may be resolved in upcoming releases
-as the JAX substrate in TFP matures. Similarly, the VI for JAX is implemented
-within the ``gigalens`` package, whereas in the TensorFlow implementation, TFP already implements
-VI, so we use their built-in method (see :func:`tfp.vi.fit_surrogate_posterior`)
+as the JAX substrate in TFP matures. For now, the flattening is done by hand in the JAX implementation.
+Similarly, the VI for JAX is implemented within the ``gigalens`` package, whereas in the TensorFlow implementation,
+TFP already implements VI, so we use their built-in method (see :func:`tfp.vi.fit_surrogate_posterior`).

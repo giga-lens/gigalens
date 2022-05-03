@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bibliography and Acknowledgements" href="bib.html" /><link rel="prev" title="Lens Simulation" href="simulation.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
-        <title>Modelling Pipeline - GIGALens documentation</title>
+        <title>Modelling Pipeline - GIGA-Lens documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">GIGALens  documentation</div></a>
+      <a href="index.html"><div class="brand">GIGA-Lens  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">GIGALens  documentation</span>
+  <span class="sidebar-brand-text">GIGA-Lens  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -155,7 +155,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Modelling Pipeline</a></li>
@@ -201,8 +201,12 @@
 <dd><p>Defines the three steps in modelling:</p>
 <ol class="arabic simple">
 <li><p>Multi-starts gradient descent to find the maximum a posteriori (MAP) estimate. See <span id="id1">Martí [<a class="reference internal" href="bib.html#id245" title="Rafael Martí. Multi-Start Methods. In Fred Glover and Gary A. Kochenberger, editors, Handbook of Metaheuristics, International Series in Operations Research &amp; Management Science, pages 355–368. Springer US, Boston, MA, 2003. URL: https://doi.org/10.1007/0-306-48056-5_12 (visited on 2021-11-04), doi:10.1007/0-306-48056-5_12.">Marti03</a>], György and Kocsis [<a class="reference internal" href="bib.html#id150" title="András György and Levente Kocsis. Efficient multi-start strategies for local search algorithms. Journal of Artificial Intelligence Research, 41:407–444, 2011. doi:10.1613/jair.3313.">GyorgyK11</a>]</span>.</p></li>
-<li><p>VI using the MAP as a starting point. See <span id="id2">Hoffman <em>et al.</em> [<a class="reference internal" href="bib.html#id162" title="Matthew D Hoffman, David M Blei, Chong Wang, and John Paisley. Stochastic variational inference. Journal of Machine Learning Research, 2013.">HBWP13</a>], Blei <em>et al.</em> [<a class="reference internal" href="bib.html#id36" title="David M. Blei, Alp Kucukelbir, and Jon D. McAuliffe. Variational inference: a review for statisticians. Journal of the American Statistical Association, 112(518):859–877, Apr 2017. URL: http://dx.doi.org/10.1080/01621459.2017.1285773, doi:10.1080/01621459.2017.1285773.">BKM17</a>]</span>.</p></li>
-<li><p>HMC using the inverse of the VI covariance matrix as the mass matrix <span class="math notranslate nohighlight">\(M\)</span>. See <span id="id3">Duane <em>et al.</em> [<a class="reference internal" href="bib.html#id96" title="Simon Duane, A.D. Kennedy, Brian J. Pendleton, and Duncan Roweth. Hybrid Monte Carlo. Physics Letters B, 195(2):216–222, September 1987. URL: https://linkinghub.elsevier.com/retrieve/pii/037026938791197X (visited on 2021-09-16), doi:10.1016/0370-2693(87)91197-X.">DKPR87</a>], Neal [<a class="reference internal" href="bib.html#id264" title="Radford Neal. MCMC Using Hamiltonian Dynamics, pages 113-162. CRC Press, 2011. doi:10.1201/b10905.">Neal11</a>]</span>.</p></li>
+<li><dl class="simple">
+<dt>Variational inference (VI) using the MAP as a starting point. See <span id="id2">Hoffman <em>et al.</em> [<a class="reference internal" href="bib.html#id162" title="Matthew D Hoffman, David M Blei, Chong Wang, and John Paisley. Stochastic variational inference. Journal of Machine Learning Research, 2013.">HBWP13</a>], Blei <em>et al.</em> [<a class="reference internal" href="bib.html#id36" title="David M. Blei, Alp Kucukelbir, and Jon D. McAuliffe. Variational inference: a review for statisticians. Journal of the American Statistical Association, 112(518):859–877, Apr 2017. URL: http://dx.doi.org/10.1080/01621459.2017.1285773, doi:10.1080/01621459.2017.1285773.">BKM17</a>]</span>. Note that the implementation of variational inference</dt><dd><p>is stochastic variational inference, so VI and SVI are interchangeable.</p>
+</dd>
+</dl>
+</li>
+<li><p>Hamiltonian Monte Carlo (HMC) using the inverse of the VI covariance matrix as the mass matrix <span class="math notranslate nohighlight">\(M\)</span>. See <span id="id3">Duane <em>et al.</em> [<a class="reference internal" href="bib.html#id96" title="Simon Duane, A.D. Kennedy, Brian J. Pendleton, and Duncan Roweth. Hybrid Monte Carlo. Physics Letters B, 195(2):216–222, September 1987. URL: https://linkinghub.elsevier.com/retrieve/pii/037026938791197X (visited on 2021-09-16), doi:10.1016/0370-2693(87)91197-X.">DKPR87</a>], Neal [<a class="reference internal" href="bib.html#id264" title="Radford Neal. MCMC Using Hamiltonian Dynamics, pages 113-162. CRC Press, 2011. doi:10.1201/b10905.">Neal11</a>]</span>.</p></li>
 </ol>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -216,7 +220,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="gigalens.inference.ModellingSequenceInterface.MAP">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">MAP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/inference.html#ModellingSequenceInterface.MAP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.inference.ModellingSequenceInterface.MAP" title="Permalink to this definition">#</a></dt>
-<dd><p>Finds maximum a posteriori (MAP) estimates for the parameters.</p>
+<dd><p>Finds maximum a posteriori (MAP) estimates for the parameters. See Section 2.3 in <a class="reference external" href="https://arxiv.org/abs/2202.07663">our paper</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -238,7 +242,10 @@ sampling directly from the prior</p></li>
 <dt class="sig sig-object py" id="gigalens.inference.ModellingSequenceInterface.SVI">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">SVI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_vi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_scales</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/inference.html#ModellingSequenceInterface.SVI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.inference.ModellingSequenceInterface.SVI" title="Permalink to this definition">#</a></dt>
 <dd><p>Runs stochastic variational inference (SVI) to characterize the posterior scales. Currently, only
-multi-variate Gaussian ansatz is supported.</p>
+multi-variate Gaussian ansatz is supported. Note that the implementation of variational inference
+is stochastic variational inference, so VI and SVI are interchangeable. This is roughly equivalent to
+taking the Hessian of the log posterior at the MAP, however, in our experience, the Hessian can become unstable
+in high dimensions (i.e., very small eigenvalues). See Section 2.4 in <a class="reference external" href="https://arxiv.org/abs/2202.07663">our paper</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -248,7 +255,7 @@ using slow learning rate warm-up.</p></li>
 Convention is that it is in unconstrained parameter space.</p></li>
 <li><p><strong>n_vi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of samples with which to approximate the ELBO loss</p></li>
 <li><p><strong>num_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of optimization steps</p></li>
-<li><p><strong>or</strong> (<em>init_scales</em><em> (</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – obj:np.array): Initial VI standard deviation guess</p></li>
+<li><p><strong>init_scales</strong> (float or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.array</span></code>) – Initial VI standard deviation guess</p></li>
 <li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – A random seed for drawing samples from the posterior ansatz</p></li>
 </ul>
 </dd>
@@ -260,13 +267,13 @@ Convention is that it is in unconstrained parameter space.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="gigalens.inference.ModellingSequenceInterface.HMC">
 <em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">HMC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_hmc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_burnin_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_leapfrog_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/inference.html#ModellingSequenceInterface.HMC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.inference.ModellingSequenceInterface.HMC" title="Permalink to this definition">#</a></dt>
-<dd><p>Runs Hamiltonian Monte Carlo (HMC) to draw posterior samples.</p>
+<dd><p>Runs Hamiltonian Monte Carlo (HMC) to draw posterior samples. See Section 2.5 in <a class="reference external" href="https://arxiv.org/abs/2202.07663">our paper</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q_z</strong> – Fitted posterior from SVI. Used to calculate the mass matrix <span class="math notranslate nohighlight">\(M\)</span> for preconditioned HMC.
 Convention is that <code class="docutils literal notranslate"><span class="pre">q_z</span></code> is an approximation of the <em>unconstrained</em> posterior.</p></li>
-<li><p><strong>init_eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Initial step size :math::<cite>epsilon</cite></p></li>
+<li><p><strong>init_eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Initial step size <span class="math notranslate nohighlight">\(\epsilon\)</span></p></li>
 <li><p><strong>init_l</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Initial number of leapfrog steps <span class="math notranslate nohighlight">\(L\)</span></p></li>
 <li><p><strong>n_hmc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of HMC chains to run in parallel</p></li>
 <li><p><strong>num_burnin_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of burn-in steps</p></li>

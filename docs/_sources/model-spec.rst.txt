@@ -4,9 +4,9 @@ We cannot begin to do inference on our data without writing out, explicitly, a m
 a model ought to be a 'story for how the observed data was generated'. A model for a gravitational
 lensing system is comprised of two components:
 
-    a. A parameterized physical model for the lensing system. This is a model for the mass profile of the main lens,
-       potentially a model the effects of any nearby interlopers, and a model for the light of both
-       the lens and source.
+    a. A parameterized physical model for the lensing system, consisting of a model for the mass profile of the main
+       lens, potentially a model for the effects of any nearby interlopers, and a model for the light of both the lens
+       and source.
 
     b. A probabilistic model, that consists of a prior for the physical parameters, as well as
        a likelihood function. Defining a likelihood requires a noise model, which for most purposes
@@ -15,7 +15,7 @@ lensing system is comprised of two components:
        with exposure time :math:`t_{exp}` (conventionally written as ``exp_time``).
 
 Although these two components of the model are not completely separate (since the prior in the
-probabilistic model is for parameters defined by the physical model), they are mostly decoupled.
+probabilistic model is for parameters defined by the physical model), they are decoupled.
 Therefore, in our implementation, we are careful to keep these two components of the model distinct.
 The following are our package's high level descriptions for a physical and probabilistic model.
 
@@ -24,8 +24,8 @@ The following are our package's high level descriptions for a physical and proba
 
 Prior Specification
 ----------------------
-Once the physical model for the lens is settled, the next step is to specify the prior. If our model
-is comprised of an EPL + Shear for the mass model, 2 Sersic's for the lens light, and 1
+Once the physical model for the lens is settled, the next step is to specify the prior. For example,
+if our model is comprised of an SIS + Shear for the mass model, 2 Sersic's for the lens light, and 1
 Sersic for the source light, the prior might look like the following:
 
 .. code-block:: python
@@ -89,8 +89,8 @@ Sersic for the source light, the prior might look like the following:
        [lens_prior, lens_light_prior, source_light_prior]
     )
 
-Although this may appear complex at first, the length is only due to the fact that
-the model has 20 parameters, each of which must have a prior distribution specified.
+Note that this is a different model than the one used in our paper. Although this may appear
+complex at first, the length is only due to the fact that the model has 20 parameters, each of which must have a prior distribution specified.
 All this says is the prior distribution is the product of independent distributions,
 that begins with :math:`\theta_E \sim \mathcal{N}(1.5, 0.25)` and ends with
 :math:`I_{e,src} \sim \mathcal{N}(150.0, 0.5)`. This way of defining the prior is very
@@ -104,7 +104,7 @@ with functions:
        dict(
            theta_E=tfd.Normal(1.5, 0.25),
            center_x=lambda theta_E: tfd.Normal(theta_E, 0.05),
-           center_y=lambda theta_E, center_x: tfd.Normal(theta_E, center_y),
+           center_y=lambda theta_E, center_x: tfd.Normal(theta_E, center_x),
        )
     )
 
@@ -113,13 +113,13 @@ This corresponds to a prior
 .. math::
     \theta_E \sim \mathcal{N}(1.5,0.25) \\
     x \sim \mathcal{N}(\theta_E,0.25) \\
-    y \sim \mathcal{N}(\theta_E,y) \\
+    y \sim \mathcal{N}(\theta_E,x) \\
 
 Obviously, this is a completely silly prior, but demonstrates the flexibility of the
 :obj:`tfp.distributions.JointDistribution` interface.
 
 Sampling from the prior will produce samples that have an identical structure to the prior.
-Sampling from the example prior might give something like:
+Sampling twice from the example prior might give something like:
 
 .. code-block:: python
     :linenos:
@@ -185,6 +185,9 @@ convenient form.
     and :func:`gigalens.tf.model.BackwardProbModel.log_prob` both expect a rank-2 Tensor ``z`` with shape ``(bs,d)``.
     If you are looking to evaluate the log density for just one example, you must expand the first dimension so it has
     shape `(1,d)`.
+
+    .. automodule:: gigalens.tf.model
+        :members:
 
 .. collapse:: JAX Implementation
 

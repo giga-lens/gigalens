@@ -1,18 +1,15 @@
-import numpy as np
-import tensorflow as tf
-import tensorflow_probability as tfp
+import functools
+
+import jax
+import jax.numpy as jnp
+import tensorflow_probability.substrates.jax as tfp
+from jax import jit
 from lenstronomy.LightModel.Profiles.shapelets import Shapelets as LenstronomyShapelets
 
 import gigalens.profile
 
-tfd = tfp.distributions
-
 
 class Shapelets(gigalens.profile.LightProfile):
-    """A flexible light profile using a Hermite polynomial basis. If `interpolate` is set to True, will precalculate
-    the Hermite polynomial
-    """
-
     _name = "SHAPELETS"
     _params = ["beta", "center_x", "center_y"]
 
@@ -35,21 +32,21 @@ class Shapelets(gigalens.profile.LightProfile):
             self._amp_names.append(f"amp{str(i).zfill(decimal_places)}")
             self.N1.append(n1)
             self.N2.append(n2)
-            herm_X.append(LenstronomyShapelets().phi_n(n1, tf.linspace(-5, 5, 6000)))
-            herm_Y.append(LenstronomyShapelets().phi_n(n2, tf.linspace(-5, 5, 6000)))
+            herm_X.append(LenstronomyShapelets().phi_n(n1, jnp.linspace(-5, 5, 6000)))
+            herm_Y.append(LenstronomyShapelets().phi_n(n2, jnp.linspace(-5, 5, 6000)))
             if n1 == 0:
                 n1 = n2 + 1
                 n2 = 0
             else:
                 n1 -= 1
                 n2 += 1
-        N = tf.range(0, self.n_max + 1, dtype=tf.float32)
-        self.prefactor = tf.constant(1. / tf.sqrt(2 ** N * tf.sqrt(float(np.pi)) * tf.exp(tf.math.lgamma(N + 1))))
-        self.depth = len(self._amp_names)
-        self.herm_X = tf.constant(herm_X, dtype=tf.float32)
-        self.herm_Y = tf.constant(herm_Y, dtype=tf.float32)
+        N = jnp.arange(0, self.n_max + 1, dtype=jnp.float32)
+        self.prefactor = 1. / jnp.sqrt(2 ** N * jnp.sqrt(float(jnp.pi)) * jnp.exp(jax.lax.lgamma(N + 1)))
+        self.depth = len(self._params)
+        self.herm_X = herm_X
+        self.herm_Y = herm_Y
 
-    @tf.function
+    @functools.partial(jit, static_argnums=(0,))
     def light(self, x, y, center_x, center_y, beta, **amp):
         if self.interpolate:
             x = (x - center_x) / beta
@@ -60,25 +57,24 @@ class Shapelets(gigalens.profile.LightProfile):
             if self.use_lstsq:
                 return ret
             else:
-                ret = tf.einsum('i...j,ij->i...j', ret, tf.convert_to_tensor(tf.nest.flatten(amp)))
-                return tf.reduce_sum(ret, axis=0)
+                ret = jnp.einsum('i...j,ij->i...j', ret, jnp.stack([amp[x] for x in self._amp_names], axis=0))
+                return jnp.sum(ret, axis=0)
         else:
             x = (x - center_x) / beta
             y = (y - center_y) / beta
             XX, YY = self.phi_n(x), self.phi_n(y)
-            fac = tf.exp(-(x ** 2 + y ** 2) / 2)
+            fac = jnp.exp(-(x ** 2 + y ** 2) / 2)
             if self.use_lstsq:
-                return fac * tf.gather(XX, self.N1, axis=0) * tf.gather(YY, self.N2, axis=0)
+                return fac * XX[self.N1, ...] * YY[self.N2, ...]
             else:
-                return fac * tf.einsum('ij,i...j->...j', tf.convert_to_tensor(tf.nest.flatten(amp)),
-                                       tf.gather(XX, self.N1, axis=0) * tf.gather(YY, self.N2, axis=0))
+                return fac * jnp.einsum('ij,i...j->...j', jnp.stack([amp[x] for x in self._amp_names], axis=0),
+                                        XX[self.N1, ...] * YY[self.N2, ...])
 
     def phi_n(self, x):
-        herm_polys = tf.convert_to_tensor([tf.ones_like(x), 2 * x])
-        i0 = tf.constant(2.)
-        c = lambda i, m: i < self.n_max + 1
-        b = lambda i, m: [i + 1, tf.concat([m, (2 * (x * m[-1] - (i - 1) * m[-2]))[tf.newaxis, ...]], axis=0)]
-        herm_polys = tf.while_loop(
-            c, b, loop_vars=[i0, herm_polys],
-            shape_invariants=[i0.get_shape(), tf.TensorShape([None, *herm_polys.shape[1:]])])[1]
-        return tf.einsum('i,i...->i...', self.prefactor, herm_polys)
+        ret = jnp.ones((self.n_max + 1, *x.shape))
+        ret = ret.at[0].set(jnp.ones_like(x))
+        ret = ret.at[1].set(2 * x)
+        for n in range(2, self.n_max + 1):
+            ret = ret.at[n].set((2 * (x * ret[n - 1] - (n - 1) * ret[n - 2])))
+
+        return jnp.einsum('i,i...->i...', self.prefactor, ret)

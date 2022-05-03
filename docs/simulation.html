@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Modelling Pipeline" href="model-pipeline.html" /><link rel="prev" title="Model Specification" href="model-spec.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
-        <title>Lens Simulation - GIGALens documentation</title>
+        <title>Lens Simulation - GIGA-Lens documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">GIGALens  documentation</div></a>
+      <a href="index.html"><div class="brand">GIGA-Lens  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">GIGALens  documentation</span>
+  <span class="sidebar-brand-text">GIGA-Lens  documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -155,7 +155,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Lens Simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
@@ -260,7 +260,7 @@ format (<code class="docutils literal notranslate"><span class="pre">lens_params
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Simulated images that have the linear parameters set to the optimal values, minimizing the chi-squared
+<dd class="field-even"><p>Simulated images that have the linear parameters set to the optimal values, minimizing the <span class="math notranslate nohighlight">\(\chi^2\)</span>
 of the residual using <code class="docutils literal notranslate"><span class="pre">err_map</span></code> as the variance.</p>
 </dd>
 </dl>
@@ -283,14 +283,14 @@ is to ensure the mean coordinate is RA, DEC = 0,0.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A tuple containing the RA and DEC at the (0,0) index of the coordinate grid (i.e., the bottom left corner),
-and the coordinate grids themselves.</p>
+and the coordinate grids (in units of arcseconds) themselves.</p>
 </dd>
 </dl>
 </dd></dl>
 </dd></dl>
 <p>There are only two methods that require implementation: a <code class="docutils literal notranslate"><span class="pre">simulate</span></code> method and a <code class="docutils literal notranslate"><span class="pre">lstsq_simulate</span></code> method. The only
 difference between the two is that <cite>lstsq_simulate</cite> will automatically solve for linear light parameters (such as
-Sersic half-light <span class="math notranslate nohighlight">\(I_e\)</span>) to minimize the chi-squared between the simulated image and some observed image (given a
+Sersic half-light <span class="math notranslate nohighlight">\(I_e\)</span>) to minimize the <span class="math notranslate nohighlight">\(\chi^2\)</span> between the simulated image and some observed image (given a
 fixed error map). Configuration options for <a class="reference internal" href="#gigalens.simulator.LensSimulatorInterface" title="gigalens.simulator.LensSimulatorInterface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LensSimulatorInterface</span></code></a> are specified with the
 <a class="reference internal" href="#gigalens.simulator.SimulatorConfig" title="gigalens.simulator.SimulatorConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimulatorConfig</span></code></a> object.</p>
 <dl class="py class">
@@ -300,7 +300,7 @@ fixed error map). Configuration options for <a class="reference internal" href="
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gigalens.simulator.SimulatorConfig.delta_pix">
 <span class="sig-name descname"><span class="pre">delta_pix</span></span><a class="headerlink" href="#gigalens.simulator.SimulatorConfig.delta_pix" title="Permalink to this definition">#</a></dt>
-<dd><p>The pixel scale (i.e., the angular resolution between adjacent pixels)</p>
+<dd><p>The pixel scale (i.e., the angular resolution)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)">float</a></p>
@@ -429,10 +429,6 @@ angle.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.shear.</span></span><span class="sig-name descname"><span class="pre">Shear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/shear.html#Shear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.shear.Shear" title="Permalink to this definition">#</a></dt>
 <dd><p>External shear model, parameterized by shear components <code class="docutils literal notranslate"><span class="pre">gamma1</span></code> and <code class="docutils literal notranslate"><span class="pre">gamma2</span></code>.</p>
 </dd></dl>
-<div class="section" id="experimental">
-<h4>Experimental<a class="headerlink" href="#experimental" title="Permalink to this headline">#</a></h4>
-<p>The below are experimental implementations, and although several (such as the <code class="docutils literal notranslate"><span class="pre">SIE</span></code>) simpler than the <code class="docutils literal notranslate"><span class="pre">EPL</span></code>,
-they have not undergone extensive tests (as opposed to the <code class="docutils literal notranslate"><span class="pre">EPL</span></code> and <code class="docutils literal notranslate"><span class="pre">Shear</span></code>).</p>
 <span class="target" id="module-gigalens.tf.profiles.mass.sis"></span><dl class="py class">
 <dt class="sig sig-object py" id="gigalens.tf.profiles.mass.sis.SIS">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.sis.</span></span><span class="sig-name descname"><span class="pre">SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/sis.html#SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.sis.SIS" title="Permalink to this definition">#</a></dt>
@@ -441,6 +437,9 @@ they have not undergone extensive tests (as opposed to the <code class="docutils
 <dt class="sig sig-object py" id="gigalens.tf.profiles.mass.sie.SIE">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.sie.</span></span><span class="sig-name descname"><span class="pre">SIE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/sie.html#SIE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.sie.SIE" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+<div class="section" id="experimental">
+<h4>Experimental<a class="headerlink" href="#experimental" title="Permalink to this headline">#</a></h4>
+<p>The below are experimental implementations that have not undergone extensive tests.</p>
 <span class="target" id="module-gigalens.tf.profiles.mass.tnfw"></span><dl class="py class">
 <dt class="sig sig-object py" id="gigalens.tf.profiles.mass.tnfw.TNFW">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.tnfw.</span></span><span class="sig-name descname"><span class="pre">TNFW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/tnfw.html#TNFW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.tnfw.TNFW" title="Permalink to this definition">#</a></dt>
@@ -514,8 +513,9 @@ If least squares is not being used, the amplitude <span class="math notranslate 
 <p>Shapelets are a more flexible light model using a Hermite polynomial basis. They have recently been introduced and are less extensively tested.</p>
 <span class="target" id="module-gigalens.tf.profiles.light.shapelets"></span><dl class="py class">
 <dt class="sig sig-object py" id="gigalens.tf.profiles.light.shapelets.Shapelets">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.light.shapelets.</span></span><span class="sig-name descname"><span class="pre">Shapelets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/shapelets.html#Shapelets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.shapelets.Shapelets" title="Permalink to this definition">#</a></dt>
-<dd><p>A flexible light profile using a Hermite polynomial basis.</p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.light.shapelets.</span></span><span class="sig-name descname"><span class="pre">Shapelets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/shapelets.html#Shapelets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.shapelets.Shapelets" title="Permalink to this definition">#</a></dt>
+<dd><p>A flexible light profile using a Hermite polynomial basis. If <cite>interpolate</cite> is set to True, will precalculate
+the Hermite polynomial</p>
 </dd></dl>
 </div>
 </div>

@@ -8,7 +8,7 @@ The backbone of our modeling code is the lens simulation. Our lens simulation in
 
 There are only two methods that require implementation: a ``simulate`` method and a ``lstsq_simulate`` method. The only
 difference between the two is that `lstsq_simulate` will automatically solve for linear light parameters (such as
-Sersic half-light :math:`I_e`) to minimize the chi-squared between the simulated image and some observed image (given a
+Sersic half-light :math:`I_e`) to minimize the :math:`\chi^2` between the simulated image and some observed image (given a
 fixed error map). Configuration options for :obj:`~gigalens.simulator.LensSimulatorInterface` are specified with the
 :obj:`~gigalens.simulator.SimulatorConfig` object.
 
@@ -44,17 +44,15 @@ Two well-tested mass classes are the ``EPL`` and ``Shear`` profiles.
     :members:
 .. automodule:: gigalens.tf.profiles.mass.shear
     :members:
-
-Experimental
-____________________________________
-The below are experimental implementations, and although several (such as the ``SIE``) simpler than the ``EPL``,
-they have not undergone extensive tests (as opposed to the ``EPL`` and ``Shear``).
-
 .. automodule:: gigalens.tf.profiles.mass.sis
     :members:
 
 .. automodule:: gigalens.tf.profiles.mass.sie
     :members:
+
+Experimental
+____________________________________
+The below are experimental implementations that have not undergone extensive tests.
 
 .. automodule:: gigalens.tf.profiles.mass.tnfw
     :members:

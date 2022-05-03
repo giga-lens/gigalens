@@ -27,7 +27,8 @@ class Sersic(gigalens.profile.LightProfile):
         Ie = tf.ones_like(R_sersic) if self.use_lstsq else Ie
         R = self.distance(x, y, center_x, center_y)
         bn = 1.9992 * n_sersic - 0.3271
-        return Ie * tf.math.exp(-bn * ((R / R_sersic) ** (1 / n_sersic) - 1.0))
+        ret = Ie * tf.math.exp(-bn * ((R / R_sersic) ** (1 / n_sersic) - 1.0))
+        return ret[tf.newaxis, ...] if self.use_lstsq else ret
 
     @tf.function
     def distance(self, x, y, cx, cy, e1=None, e2=None):
@@ -67,7 +68,8 @@ class SersicEllipse(Sersic):
         Ie = tf.ones_like(R_sersic) if self.use_lstsq else Ie
         R = self.distance(x, y, center_x, center_y, e1, e2)
         bn = 1.9992 * n_sersic - 0.3271
-        return Ie * tf.math.exp(-bn * ((R / R_sersic) ** (1 / n_sersic) - 1.0))
+        ret = Ie * tf.math.exp(-bn * ((R / R_sersic) ** (1 / n_sersic) - 1.0))
+        return ret[tf.newaxis, ...] if self.use_lstsq else ret
 
 
 class CoreSersic(Sersic):
@@ -103,7 +105,7 @@ class CoreSersic(Sersic):
         Ie = tf.ones_like(R_sersic) if self.use_lstsq else Ie
         R = self.distance(x, y, center_x, center_y, e1, e2)
         bn = 1.9992 * n_sersic - 0.3271
-        result = (
+        ret = (
                 Ie
                 * (1 + (Rb / R) ** alpha) ** (gamma / alpha)
                 * tf.math.exp(
@@ -116,4 +118,4 @@ class CoreSersic(Sersic):
             - 1.0
         )
         )
-        return result
+        return ret[tf.newaxis, ...] if self.use_lstsq else ret

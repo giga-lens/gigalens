@@ -74,7 +74,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
         """
         x = self.bij.forward(z)
         im_sim = simulator.simulate(x)
-        err_map = tf.math.sqrt(self.background_rms ** 2 + im_sim / self.exp_time)
+        err_map = tf.math.sqrt(self.background_rms ** 2 + tf.clip_by_value(im_sim, 0, np.inf) / self.exp_time)
         log_like = tfd.Independent(
             tfd.Normal(im_sim, err_map), reinterpreted_batch_ndims=2
         ).log_prob(self.observed_image)
@@ -157,9 +157,7 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
         x = self.bij.forward(z)
         im_sim = simulator.lstsq_simulate(x, self.observed_image, self.err_map)
         log_like = self.observed_dist.log_prob(im_sim)
-        log_prior = self.prior.log_prob(
-            x
-        ) + self.unconstraining_bij.forward_log_det_jacobian(self.pack_bij.forward(z))
+        log_prior = self.prior.log_prob(x) + self.unconstraining_bij.forward_log_det_jacobian(x)
         return log_like + log_prior, tf.reduce_mean(
             ((im_sim - self.observed_image) / self.err_map) ** 2, axis=(-2, -1)
         )
