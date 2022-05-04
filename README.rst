@@ -17,7 +17,8 @@ Installation
 
     pip install gigalens
 
-Tests can be run simply by running ``tox`` in the root directory.
+If pip notes an error after installation about conflicting dependencies, these can usually be safely ignored.
+If you wish to test the installation, tests can be run simply by running ``tox`` in the root directory.
 
 Requirements
 ^^^^^^^^^^^^
