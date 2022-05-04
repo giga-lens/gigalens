@@ -2,7 +2,7 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Modelling Pipeline" href="model-pipeline.html" /><link rel="prev" title="Model Specification" href="model-spec.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Available Mass and Light Profiles" href="profiles.html" /><link rel="prev" title="Model Specification" href="model-spec.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
         <title>Lens Simulation - GIGA-Lens documentation</title>
@@ -133,7 +133,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -157,7 +157,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Lens Simulation</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Lens Simulation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html">Available Mass and Light Profiles</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
 </ul>
@@ -186,7 +189,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -354,170 +357,17 @@ TensorFlow’s <code class="docutils literal notranslate"><span class="pre">tf.f
 implemented are all carefully designed to all stay ‘within’ TensorFlow or JAX – that is, absolutely no use of
 external libraries such as <code class="docutils literal notranslate"><span class="pre">numpy</span></code> or <code class="docutils literal notranslate"><span class="pre">scipy</span></code> in methods that are used during simulation time. Below is a list of
 currently supported lens and mass profiles. Contributions are welcome!</p>
-<div class="section" id="available-profiles">
-<h2>Available Profiles<a class="headerlink" href="#available-profiles" title="Permalink to this headline">#</a></h2>
-<p>All parameterizable profiles implement <a class="reference internal" href="#gigalens.profile.Parameterized" title="gigalens.profile.Parameterized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parameterized</span></code></a>.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="gigalens.profile.Parameterized">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.profile.</span></span><span class="sig-name descname"><span class="pre">Parameterized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/profile.html#Parameterized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.profile.Parameterized" title="Permalink to this definition">#</a></dt>
-<dd><p>Interface for a parameterized profile of any kind.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gigalens.profile.Parameterized.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#gigalens.profile.Parameterized.name" title="Permalink to this definition">#</a></dt>
-<dd><p>Name of the profile</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gigalens.profile.Parameterized.params">
-<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#gigalens.profile.Parameterized.params" title="Permalink to this definition">#</a></dt>
-<dd><p>List of parameter names</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<div class="section" id="mass-profiles">
-<h3>Mass Profiles<a class="headerlink" href="#mass-profiles" title="Permalink to this headline">#</a></h3>
-<p>All mass profiles must implement <a class="reference internal" href="#gigalens.profile.MassProfile" title="gigalens.profile.MassProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MassProfile</span></code></a>, which essentially requires the definition of the deflection
-angle.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="gigalens.profile.MassProfile">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.profile.</span></span><span class="sig-name descname"><span class="pre">MassProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/profile.html#MassProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.profile.MassProfile" title="Permalink to this definition">#</a></dt>
-<dd><p>Interface for a mass profile.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="gigalens.profile.MassProfile.deriv">
-<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">deriv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/profile.html#MassProfile.deriv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.profile.MassProfile.deriv" title="Permalink to this definition">#</a></dt>
-<dd><p>Calculates deflection angle.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – <span class="math notranslate nohighlight">\(x\)</span> coordinate at which to evaluate the deflection</p></li>
-<li><p><strong>y</strong> – <span class="math notranslate nohighlight">\(y\)</span> coordinate at which to evaluate the deflection</p></li>
-<li><p><strong>**kwargs</strong> – Mass profile parameters. Each parameter must be shaped in a way that is broadcastable with x and y</p></li>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="profiles.html">Available Mass and Light Profiles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html#mass-profiles">Mass Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="profiles.html#experimental">Experimental</a></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A tuple <span class="math notranslate nohighlight">\((\alpha_x, \alpha_y)\)</span> containing the deflection angle in the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> directions</p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<p>Two well-tested mass classes are the <code class="docutils literal notranslate"><span class="pre">EPL</span></code> and <code class="docutils literal notranslate"><span class="pre">Shear</span></code> profiles.</p>
-<span class="target" id="module-gigalens.tf.profiles.mass.epl"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.mass.epl.EPL">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.epl.</span></span><span class="sig-name descname"><span class="pre">EPL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/epl.html#EPL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.epl.EPL" title="Permalink to this definition">#</a></dt>
-<dd><p>The elliptical power law mass profile, calculated iteratively as in <span id="id1">[<a class="reference internal" href="bib.html#id371" title="Nicolas Tessore and Robert Metcalf. The elliptical power law profile lens. Astronomy and Astrophysics, 580:A79, Aug 2015. URL: http://dx.doi.org/10.1051/0004-6361/201526773, doi:10.1051/0004-6361/201526773.">TM15</a>]</span>.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.mass.epl.EPL.niter">
-<span class="sig-name descname"><span class="pre">niter</span></span><a class="headerlink" href="#gigalens.tf.profiles.mass.epl.EPL.niter" title="Permalink to this definition">#</a></dt>
-<dd><p>Maximum number of iterations for calculating the deflection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<span class="target" id="module-gigalens.tf.profiles.mass.shear"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.mass.shear.Shear">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.shear.</span></span><span class="sig-name descname"><span class="pre">Shear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/shear.html#Shear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.shear.Shear" title="Permalink to this definition">#</a></dt>
-<dd><p>External shear model, parameterized by shear components <code class="docutils literal notranslate"><span class="pre">gamma1</span></code> and <code class="docutils literal notranslate"><span class="pre">gamma2</span></code>.</p>
-</dd></dl>
-<span class="target" id="module-gigalens.tf.profiles.mass.sis"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.mass.sis.SIS">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.sis.</span></span><span class="sig-name descname"><span class="pre">SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/sis.html#SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.sis.SIS" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<span class="target" id="module-gigalens.tf.profiles.mass.sie"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.mass.sie.SIE">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.sie.</span></span><span class="sig-name descname"><span class="pre">SIE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/sie.html#SIE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.sie.SIE" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<div class="section" id="experimental">
-<h4>Experimental<a class="headerlink" href="#experimental" title="Permalink to this headline">#</a></h4>
-<p>The below are experimental implementations that have not undergone extensive tests.</p>
-<span class="target" id="module-gigalens.tf.profiles.mass.tnfw"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.mass.tnfw.TNFW">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.mass.tnfw.</span></span><span class="sig-name descname"><span class="pre">TNFW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/mass/tnfw.html#TNFW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.mass.tnfw.TNFW" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-</div>
-</div>
-<div class="section" id="light-profiles">
-<h3>Light Profiles<a class="headerlink" href="#light-profiles" title="Permalink to this headline">#</a></h3>
-<p>Any light profile must implement <a class="reference internal" href="#gigalens.profile.LightProfile" title="gigalens.profile.LightProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LightProfile</span></code></a>, which requires
-the light amplitude to be defined.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="gigalens.profile.LightProfile">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.profile.</span></span><span class="sig-name descname"><span class="pre">LightProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/profile.html#LightProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.profile.LightProfile" title="Permalink to this definition">#</a></dt>
-<dd><p>Interface for a light profile.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>use_lstsq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Whether to use least squares to solve for linear parameters</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gigalens.profile.LightProfile._use_lstsq">
-<span class="sig-name descname"><span class="pre">_use_lstsq</span></span><a class="headerlink" href="#gigalens.profile.LightProfile._use_lstsq" title="Permalink to this definition">#</a></dt>
-<dd><p>Whether to use least squares to solve for linear parameters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<p>The Sersic profiles are well-tested implementations.</p>
-<span class="target" id="module-gigalens.tf.profiles.light.sersic"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.light.sersic.Sersic">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.light.sersic.</span></span><span class="sig-name descname"><span class="pre">Sersic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/sersic.html#Sersic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.sersic.Sersic" title="Permalink to this definition">#</a></dt>
-<dd><p>A spherically symmetric Sersic light profile.</p>
-<div class="math-wrapper"><div class="math notranslate nohighlight">
-\[I(x,y) = I_e \exp\left(-b_n \left(\left(\frac{D(x,y)}{R_s}\right)^{1/n} - 1\right)\right)\]</div></div>
-<p>where <span class="math notranslate nohighlight">\(D(x,y)\)</span> is the distance function (as defined in <a class="reference internal" href="#gigalens.tf.profiles.light.sersic.Sersic.distance" title="gigalens.tf.profiles.light.sersic.Sersic.distance"><code class="xref py py-func docutils literal notranslate"><span class="pre">distance()</span></code></a>).
-In the simplest case, it is just Euclidean distance from the center, and when ellipticity is non-zero, the
-coordinate axes are translated, rotated and scaled to match the ellipse defined by the complex ellipticities
-<code class="docutils literal notranslate"><span class="pre">(e1,e2)</span></code> with center <code class="docutils literal notranslate"><span class="pre">(center_x,</span> <span class="pre">center_y)</span></code> then the Euclidean distance from the center is calculated.
-If least squares is not being used, the amplitude <span class="math notranslate nohighlight">\(I_e\)</span> is set to be 1.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.light.sersic.Sersic.distance">
-<span class="sig-name descname"><span class="pre">distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/sersic.html#Sersic.distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.sersic.Sersic.distance" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – The <span class="math notranslate nohighlight">\(x\)</span> coordinates to evaluate the distance function at</p></li>
-<li><p><strong>y</strong> – The <span class="math notranslate nohighlight">\(y\)</span> coordinates to evaluate the distance function at</p></li>
-<li><p><strong>cx</strong> – The <span class="math notranslate nohighlight">\(x\)</span> coordinate of the center of the Sersic light component</p></li>
-<li><p><strong>cy</strong> – The <span class="math notranslate nohighlight">\(y\)</span> coordinate of the center of the Sersic light component</p></li>
-<li><p><strong>e1</strong> – Complex ellipticity component. If unspecified, it is assumed to be zero.</p></li>
-<li><p><strong>e2</strong> – Complex ellipticity component. If unspecified, it is assumed to be zero.</p></li>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html#light-profiles">Light Profiles</a></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The distance function evaluated at <code class="docutils literal notranslate"><span class="pre">(x,y)</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.light.sersic.SersicEllipse">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.light.sersic.</span></span><span class="sig-name descname"><span class="pre">SersicEllipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/sersic.html#SersicEllipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.sersic.SersicEllipse" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.light.sersic.CoreSersic">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.light.sersic.</span></span><span class="sig-name descname"><span class="pre">CoreSersic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/sersic.html#CoreSersic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.sersic.CoreSersic" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-<p>Shapelets are a more flexible light model using a Hermite polynomial basis. They have recently been introduced and are less extensively tested.</p>
-<span class="target" id="module-gigalens.tf.profiles.light.shapelets"></span><dl class="py class">
-<dt class="sig sig-object py" id="gigalens.tf.profiles.light.shapelets.Shapelets">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gigalens.tf.profiles.light.shapelets.</span></span><span class="sig-name descname"><span class="pre">Shapelets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lstsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gigalens/tf/profiles/light/shapelets.html#Shapelets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gigalens.tf.profiles.light.shapelets.Shapelets" title="Permalink to this definition">#</a></dt>
-<dd><p>A flexible light profile using a Hermite polynomial basis. If <cite>interpolate</cite> is set to True, will precalculate
-the Hermite polynomial</p>
-</dd></dl>
-</div>
+</li>
+</ul>
 </div>
 </div>
 
@@ -526,12 +376,12 @@ the Hermite polynomial</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="model-pipeline.html">
+          <a class="next-page" href="profiles.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Modelling Pipeline</div>
+                <div class="title">Available Mass and Light Profiles</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -566,34 +416,8 @@ the Hermite polynomial</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Lens Simulation</a><ul>
-<li><a class="reference internal" href="#available-profiles">Available Profiles</a><ul>
-<li><a class="reference internal" href="#mass-profiles">Mass Profiles</a><ul>
-<li><a class="reference internal" href="#experimental">Experimental</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#light-profiles">Light Profiles</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

@@ -156,7 +156,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="simulation.html">Lens Simulation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html">Available Mass and Light Profiles</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
 </ul>
@@ -200,7 +203,7 @@
   <h2>_</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.profile.LightProfile._use_lstsq">_use_lstsq (gigalens.profile.LightProfile attribute)</a>
+        <li><a href="profiles.html#gigalens.profile.LightProfile._use_lstsq">_use_lstsq (gigalens.profile.LightProfile attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -238,8 +241,12 @@
   <h2>C</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.tf.profiles.light.sersic.CoreSersic">CoreSersic (class in gigalens.tf.profiles.light.sersic)</a>
+        <li><a href="profiles.html#gigalens.jax.profiles.light.sersic.CoreSersic">CoreSersic (class in gigalens.jax.profiles.light.sersic)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.light.sersic.CoreSersic">(class in gigalens.tf.profiles.light.sersic)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -252,9 +259,9 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.profile.MassProfile.deriv">deriv() (gigalens.profile.MassProfile method)</a>
+        <li><a href="profiles.html#gigalens.profile.MassProfile.deriv">deriv() (gigalens.profile.MassProfile method)</a>
 </li>
-        <li><a href="simulation.html#gigalens.tf.profiles.light.sersic.Sersic.distance">distance() (gigalens.tf.profiles.light.sersic.Sersic method)</a>
+        <li><a href="profiles.html#gigalens.tf.profiles.light.sersic.Sersic.distance">distance() (gigalens.tf.profiles.light.sersic.Sersic method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -264,8 +271,12 @@
   <h2>E</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.tf.profiles.mass.epl.EPL">EPL (class in gigalens.tf.profiles.mass.epl)</a>
+        <li><a href="profiles.html#gigalens.jax.profiles.mass.epl.EPL">EPL (class in gigalens.jax.profiles.mass.epl)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.mass.epl.EPL">(class in gigalens.tf.profiles.mass.epl)</a>
 </li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="model-spec.html#gigalens.tf.model.BackwardProbModel.exp_time">exp_time (gigalens.tf.model.BackwardProbModel attribute)</a>
@@ -302,12 +313,56 @@
 </li>
         </ul></li>
         <li>
+    gigalens.jax.profiles.light.sersic
+
+        <ul>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.light.sersic">module</a>
+</li>
+        </ul></li>
+        <li>
+    gigalens.jax.profiles.light.shapelets
+
+        <ul>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.light.shapelets">module</a>
+</li>
+        </ul></li>
+        <li>
+    gigalens.jax.profiles.mass.epl
+
+        <ul>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.epl">module</a>
+</li>
+        </ul></li>
+        <li>
+    gigalens.jax.profiles.mass.shear
+
+        <ul>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.shear">module</a>
+</li>
+        </ul></li>
+        <li>
+    gigalens.jax.profiles.mass.sie
+
+        <ul>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.sie">module</a>
+</li>
+        </ul></li>
+        <li>
+    gigalens.jax.profiles.mass.sis
+
+        <ul>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.sis">module</a>
+</li>
+        </ul></li>
+        <li>
     gigalens.model
 
         <ul>
           <li><a href="model-spec.html#module-gigalens.model">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     gigalens.tf.model
 
@@ -319,51 +374,49 @@
     gigalens.tf.profiles.light.sersic
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.light.sersic">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.light.sersic">module</a>
 </li>
         </ul></li>
         <li>
     gigalens.tf.profiles.light.shapelets
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.light.shapelets">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.light.shapelets">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     gigalens.tf.profiles.mass.epl
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.epl">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.epl">module</a>
 </li>
         </ul></li>
         <li>
     gigalens.tf.profiles.mass.shear
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.shear">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.shear">module</a>
 </li>
         </ul></li>
         <li>
     gigalens.tf.profiles.mass.sie
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.sie">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.sie">module</a>
 </li>
         </ul></li>
         <li>
     gigalens.tf.profiles.mass.sis
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.sis">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.sis">module</a>
 </li>
         </ul></li>
         <li>
     gigalens.tf.profiles.mass.tnfw
 
         <ul>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.tnfw">module</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.tnfw">module</a>
 </li>
         </ul></li>
     </ul></td>
@@ -400,7 +453,7 @@
 </li>
         <li><a href="simulation.html#gigalens.simulator.LensSimulatorInterface">LensSimulatorInterface (class in gigalens.simulator)</a>
 </li>
-        <li><a href="simulation.html#gigalens.profile.LightProfile">LightProfile (class in gigalens.profile)</a>
+        <li><a href="profiles.html#gigalens.profile.LightProfile">LightProfile (class in gigalens.profile)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -424,7 +477,7 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="model-pipeline.html#gigalens.inference.ModellingSequenceInterface.MAP">MAP() (gigalens.inference.ModellingSequenceInterface method)</a>
 </li>
-        <li><a href="simulation.html#gigalens.profile.MassProfile">MassProfile (class in gigalens.profile)</a>
+        <li><a href="profiles.html#gigalens.profile.MassProfile">MassProfile (class in gigalens.profile)</a>
 </li>
         <li><a href="model-pipeline.html#gigalens.inference.ModellingSequenceInterface">ModellingSequenceInterface (class in gigalens.inference)</a>
 </li>
@@ -434,23 +487,35 @@
         <ul>
           <li><a href="model-pipeline.html#module-gigalens.inference">gigalens.inference</a>
 </li>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.light.sersic">gigalens.jax.profiles.light.sersic</a>
+</li>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.light.shapelets">gigalens.jax.profiles.light.shapelets</a>
+</li>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.epl">gigalens.jax.profiles.mass.epl</a>
+</li>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.shear">gigalens.jax.profiles.mass.shear</a>
+</li>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.sie">gigalens.jax.profiles.mass.sie</a>
+</li>
+          <li><a href="profiles.html#module-gigalens.jax.profiles.mass.sis">gigalens.jax.profiles.mass.sis</a>
+</li>
           <li><a href="model-spec.html#module-gigalens.model">gigalens.model</a>
 </li>
           <li><a href="model-spec.html#module-gigalens.tf.model">gigalens.tf.model</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.light.sersic">gigalens.tf.profiles.light.sersic</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.light.sersic">gigalens.tf.profiles.light.sersic</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.light.shapelets">gigalens.tf.profiles.light.shapelets</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.light.shapelets">gigalens.tf.profiles.light.shapelets</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.epl">gigalens.tf.profiles.mass.epl</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.epl">gigalens.tf.profiles.mass.epl</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.shear">gigalens.tf.profiles.mass.shear</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.shear">gigalens.tf.profiles.mass.shear</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.sie">gigalens.tf.profiles.mass.sie</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.sie">gigalens.tf.profiles.mass.sie</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.sis">gigalens.tf.profiles.mass.sis</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.sis">gigalens.tf.profiles.mass.sis</a>
 </li>
-          <li><a href="simulation.html#module-gigalens.tf.profiles.mass.tnfw">gigalens.tf.profiles.mass.tnfw</a>
+          <li><a href="profiles.html#module-gigalens.tf.profiles.mass.tnfw">gigalens.tf.profiles.mass.tnfw</a>
 </li>
         </ul></li>
     </ul></td>
@@ -461,11 +526,11 @@
   <h2>N</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.profile.Parameterized.name">name (gigalens.profile.Parameterized attribute)</a>
+        <li><a href="profiles.html#gigalens.profile.Parameterized.name">name (gigalens.profile.Parameterized attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.tf.profiles.mass.epl.EPL.niter">niter (gigalens.tf.profiles.mass.epl.EPL attribute)</a>
+        <li><a href="profiles.html#gigalens.tf.profiles.mass.epl.EPL.niter">niter (gigalens.tf.profiles.mass.epl.EPL attribute)</a>
 </li>
         <li><a href="simulation.html#gigalens.simulator.SimulatorConfig.num_pix">num_pix (gigalens.simulator.SimulatorConfig attribute)</a>
 </li>
@@ -497,9 +562,9 @@
           <li><a href="model-spec.html#gigalens.tf.model.ForwardProbModel.pack_bij">(gigalens.tf.model.ForwardProbModel attribute)</a>
 </li>
         </ul></li>
-        <li><a href="simulation.html#gigalens.profile.Parameterized">Parameterized (class in gigalens.profile)</a>
+        <li><a href="profiles.html#gigalens.profile.Parameterized">Parameterized (class in gigalens.profile)</a>
 </li>
-        <li><a href="simulation.html#gigalens.profile.Parameterized.params">params (gigalens.profile.Parameterized attribute)</a>
+        <li><a href="profiles.html#gigalens.profile.Parameterized.params">params (gigalens.profile.Parameterized attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -519,26 +584,50 @@
   <h2>S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.tf.profiles.light.sersic.Sersic">Sersic (class in gigalens.tf.profiles.light.sersic)</a>
+        <li><a href="profiles.html#gigalens.jax.profiles.light.sersic.Sersic">Sersic (class in gigalens.jax.profiles.light.sersic)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.light.sersic.Sersic">(class in gigalens.tf.profiles.light.sersic)</a>
 </li>
-        <li><a href="simulation.html#gigalens.tf.profiles.light.sersic.SersicEllipse">SersicEllipse (class in gigalens.tf.profiles.light.sersic)</a>
+        </ul></li>
+        <li><a href="profiles.html#gigalens.jax.profiles.light.sersic.SersicEllipse">SersicEllipse (class in gigalens.jax.profiles.light.sersic)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.light.sersic.SersicEllipse">(class in gigalens.tf.profiles.light.sersic)</a>
 </li>
-        <li><a href="simulation.html#gigalens.tf.profiles.light.shapelets.Shapelets">Shapelets (class in gigalens.tf.profiles.light.shapelets)</a>
+        </ul></li>
+        <li><a href="profiles.html#gigalens.jax.profiles.light.shapelets.Shapelets">Shapelets (class in gigalens.jax.profiles.light.shapelets)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.light.shapelets.Shapelets">(class in gigalens.tf.profiles.light.shapelets)</a>
 </li>
-        <li><a href="simulation.html#gigalens.tf.profiles.mass.shear.Shear">Shear (class in gigalens.tf.profiles.mass.shear)</a>
+        </ul></li>
+        <li><a href="profiles.html#gigalens.jax.profiles.mass.shear.Shear">Shear (class in gigalens.jax.profiles.mass.shear)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.mass.shear.Shear">(class in gigalens.tf.profiles.mass.shear)</a>
 </li>
-        <li><a href="simulation.html#gigalens.tf.profiles.mass.sie.SIE">SIE (class in gigalens.tf.profiles.mass.sie)</a>
+        </ul></li>
+        <li><a href="profiles.html#gigalens.jax.profiles.mass.sie.SIE">SIE (class in gigalens.jax.profiles.mass.sie)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.mass.sie.SIE">(class in gigalens.tf.profiles.mass.sie)</a>
 </li>
-        <li><a href="simulation.html#gigalens.simulator.LensSimulatorInterface.sim_config">sim_config (gigalens.simulator.LensSimulatorInterface attribute)</a>
-</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="simulation.html#gigalens.simulator.LensSimulatorInterface.sim_config">sim_config (gigalens.simulator.LensSimulatorInterface attribute)</a>
+</li>
         <li><a href="simulation.html#gigalens.simulator.LensSimulatorInterface.simulate">simulate() (gigalens.simulator.LensSimulatorInterface method)</a>
 </li>
         <li><a href="simulation.html#gigalens.simulator.SimulatorConfig">SimulatorConfig (class in gigalens.simulator)</a>
 </li>
-        <li><a href="simulation.html#gigalens.tf.profiles.mass.sis.SIS">SIS (class in gigalens.tf.profiles.mass.sis)</a>
+        <li><a href="profiles.html#gigalens.jax.profiles.mass.sis.SIS">SIS (class in gigalens.jax.profiles.mass.sis)</a>
+
+        <ul>
+          <li><a href="profiles.html#gigalens.tf.profiles.mass.sis.SIS">(class in gigalens.tf.profiles.mass.sis)</a>
 </li>
+        </ul></li>
         <li><a href="model-spec.html#gigalens.model.PhysicalModel.source_light">source_light (gigalens.model.PhysicalModel attribute)</a>
 </li>
         <li><a href="simulation.html#gigalens.simulator.SimulatorConfig.supersample">supersample (gigalens.simulator.SimulatorConfig attribute)</a>
@@ -553,7 +642,7 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="simulation.html#gigalens.tf.profiles.mass.tnfw.TNFW">TNFW (class in gigalens.tf.profiles.mass.tnfw)</a>
+        <li><a href="profiles.html#gigalens.tf.profiles.mass.tnfw.TNFW">TNFW (class in gigalens.tf.profiles.mass.tnfw)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>

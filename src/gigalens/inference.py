@@ -11,8 +11,7 @@ class ModellingSequenceInterface(ABC):
     """Defines the three steps in modelling:
 
     1. Multi-starts gradient descent to find the maximum a posteriori (MAP) estimate. See :cite:t:`marti2003,gyorgy2011`.
-    2. Variational inference (VI) using the MAP as a starting point. See :cite:t:`hoffman2013,blei2017`. Note that the implementation of variational inference
-        is stochastic variational inference, so VI and SVI are interchangeable.
+    2. Variational inference (VI) using the MAP as a starting point. See :cite:t:`hoffman2013,blei2017`. Note that the implementation of variational inference is stochastic variational inference, so VI and SVI are interchangeable.
     3. Hamiltonian Monte Carlo (HMC) using the inverse of the VI covariance matrix as the mass matrix :math:`M`. See :cite:t:`duan1987a, neal2012a`.
 
     Args:

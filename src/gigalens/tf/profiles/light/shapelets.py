@@ -10,7 +10,8 @@ tfd = tfp.distributions
 
 class Shapelets(gigalens.profile.LightProfile):
     """A flexible light profile using a Hermite polynomial basis. If `interpolate` is set to True, will precalculate
-    the Hermite polynomial
+    the Hermite polynomial and interpolate between precalculated values. Otherwise, the Hermite polynomials will be
+    evaluated at every call of Shapelets.function()
     """
 
     _name = "SHAPELETS"

@@ -1,6 +1,8 @@
 Lens Simulation
 =========================
 
+
+
 The backbone of our modeling code is the lens simulation. Our lens simulation interface is very simple.
 
 .. autoclass:: gigalens.simulator.LensSimulatorInterface
@@ -21,57 +23,6 @@ implemented are all carefully designed to all stay 'within' TensorFlow or JAX --
 external libraries such as ``numpy`` or ``scipy`` in methods that are used during simulation time. Below is a list of
 currently supported lens and mass profiles. Contributions are welcome!
 
-Available Profiles
-**********************************
+.. toctree::
+    profiles.rst
 
-
-All parameterizable profiles implement :obj:`~gigalens.profile.Parameterized`.
-
-.. autoclass:: gigalens.profile.Parameterized
-    :members:
-
-Mass Profiles
-------------------------------------
-All mass profiles must implement :obj:`~gigalens.profile.MassProfile`, which essentially requires the definition of the deflection
-angle.
-
-.. autoclass:: gigalens.profile.MassProfile
-    :members:
-
-Two well-tested mass classes are the ``EPL`` and ``Shear`` profiles.
-
-.. automodule:: gigalens.tf.profiles.mass.epl
-    :members:
-.. automodule:: gigalens.tf.profiles.mass.shear
-    :members:
-.. automodule:: gigalens.tf.profiles.mass.sis
-    :members:
-
-.. automodule:: gigalens.tf.profiles.mass.sie
-    :members:
-
-Experimental
-____________________________________
-The below are experimental implementations that have not undergone extensive tests.
-
-.. automodule:: gigalens.tf.profiles.mass.tnfw
-    :members:
-
-
-Light Profiles
-------------------------------------
-Any light profile must implement :obj:`~gigalens.profile.LightProfile`, which requires
-the light amplitude to be defined.
-
-.. autoclass:: gigalens.profile.LightProfile
-    :members:
-
-The Sersic profiles are well-tested implementations.
-
-.. automodule:: gigalens.tf.profiles.light.sersic
-    :members:
-
-Shapelets are a more flexible light model using a Hermite polynomial basis. They have recently been introduced and are less extensively tested.
-
-.. automodule:: gigalens.tf.profiles.light.shapelets
-    :members:
