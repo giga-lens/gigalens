@@ -60,8 +60,8 @@ class ModellingSequenceInterface(ABC):
         """Runs stochastic variational inference (SVI) to characterize the posterior scales. Currently, only
         multi-variate Gaussian ansatz is supported. Note that the implementation of variational inference
         is stochastic variational inference, so VI and SVI are interchangeable. This is roughly equivalent to
-        taking the Hessian of the log posterior at the MAP, however, in our experience, the Hessian can become unstable
-        in high dimensions (i.e., very small eigenvalues). See Section 2.4 in `our paper <https://arxiv.org/abs/2202.07663>`__.
+        taking the Hessian of the log posterior at the MAP. However, in our experience, the Hessian can become unstable
+        in high dimensions (in cases of very small eigenvalues). See Section 2.4 in `our paper <https://arxiv.org/abs/2202.07663>`__.
 
         Args:
             optimizer: An optimizer with which to minimize the ELBO loss. Adam or variants thereof are recommended,

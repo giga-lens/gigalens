@@ -26,7 +26,7 @@ extras = {
 
 setup(
     name="gigalens",
-    version="0.1.1",
+    version="0.1.2",
     license="MIT",
     author="Andi Gu",
     author_email="andi.gu@berkeley.edu",
@@ -49,7 +49,6 @@ setup(
         "corner==2.2.1",
         "mpmath==1.2.1",
         "tqdm==4.62.0",
-        "PyYAML>=6.0"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

@@ -1,25 +1,27 @@
 Model Specification
 ============================
 We cannot begin to do inference on our data without writing out, explicitly, a model for the data. Heuristically,
-a model ought to be a 'story for how the observed data was generated'. A model for a gravitational
-lensing system is comprised of two components:
+a model ought to be a 'story for how the observed data was generated'. Our model is comprised of two components:
 
     a. A parameterized physical model for the lensing system, consisting of a model for the mass profile of the main
-       lens, potentially a model for the effects of any nearby interlopers, and a model for the light of both the lens
-       and source.
+       lens, potentially a model for the effects of any nearby interlopers, and models for the light profiles of the lens and the source.
 
     b. A probabilistic model, that consists of a prior for the physical parameters, as well as
        a likelihood function. Defining a likelihood requires a noise model, which for most purposes
-       will consist of modeling the noise on a given pixel as the independent sum of background Gaussian
+       will consist of modeling the noise on a given pixel as the quadrature sum of background Gaussian
        noise :math:`\sigma_{bkg}` (conventionally written as ``background_rms``) and Poisson shot noise
        with exposure time :math:`t_{exp}` (conventionally written as ``exp_time``).
 
-Although these two components of the model are not completely separate (since the prior in the
-probabilistic model is for parameters defined by the physical model), they are decoupled.
-Therefore, in our implementation, we are careful to keep these two components of the model distinct.
-The following are our package's high level descriptions for a physical and probabilistic model.
+Keep in mind that for any given physical model, there can be a number of valid choices for the probabilistic model.
+Therefore, in our implementation, we are careful to keep these two components of the model distinct
+(see Section 2.1 of our `paper <https://arxiv.org/abs/2202.07663>`__). The following are our package's high level descriptions for a physical and probabilistic model.
 
 .. automodule:: gigalens.model
+    :members:
+
+The TensorFlow implementation of the two above classes are below.
+
+.. automodule:: gigalens.tf.model
     :members:
 
 Prior Specification
