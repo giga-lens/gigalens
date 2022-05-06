@@ -24,7 +24,7 @@ If you wish to test the installation, tests can be run simply by running ``tox``
 If you don’t have access to institutional GPUs, one easy way is to use GPU on Google Colab.  Please remember the
 very first cell should have ``!pip install gigalens``. If you do have access to institutional GPUs, you can set up a
 notebook to run on GPU.  For example, at `NESRC <https://jupyter.nersc.gov/hub/>`__, you can choose the kernel
-``tensorflow-2.6.0``, and include in the first cell: ``pip install gigalens``.
+``tensorflow-2.6.0``, and include in the first cell: ``!pip install gigalens``.
 
 
 Requirements

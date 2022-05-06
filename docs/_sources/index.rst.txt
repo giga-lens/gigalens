@@ -7,10 +7,10 @@ please see `our paper <https://arxiv.org/abs/2202.07663>`__.
 Demo notebooks
 --------------------------
 
-* `TensorFlow quickstart <https://github.com/giga-lens/gigalens/blob/master/tf-demo.ipynb>`__
-* `JAX quickstart <https://github.com/giga-lens/gigalens/blob/master/jax-demo.ipynb>`__
-* `Using shapelets to model the source galaxy (Birrer+ 2015) on TensorFlow <https://github.com/giga-lens/gigalens/blob/master/shapelets-demo.ipynb>`__
 * `Quickstart with TensorFlow on Google Colab <https://colab.research.google.com/drive/1NXdmVj2EAuxAd3IX7z-PBvSH-zTxZG9T?usp=sharing>`__
+* `TensorFlow quickstart <https://github.com/giga-lens/gigalens/blob/master/tf-demo.ipynb>`__
+* `Using shapelets to model the source galaxy (Birrer+ 2015) on TensorFlow <https://github.com/giga-lens/gigalens/blob/master/shapelets-demo.ipynb>`__
+* `JAX quickstart <https://github.com/giga-lens/gigalens/blob/master/jax-demo.ipynb>`__
 
 .. toctree::
    :maxdepth: 3
