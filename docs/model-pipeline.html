@@ -2,7 +2,7 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bibliography and Acknowledgements" href="bib.html" /><link rel="prev" title="Lens Simulation" href="simulation.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bibliography and Acknowledgements" href="bib.html" /><link rel="prev" title="Available Mass and Light Profiles" href="profiles.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
         <title>Modelling Pipeline - GIGA-Lens documentation</title>
@@ -157,7 +157,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="simulation.html">Lens Simulation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html">Available Mass and Light Profiles</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Modelling Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
 </ul>
@@ -240,8 +243,8 @@ sampling directly from the prior</p></li>
 <dd><p>Runs stochastic variational inference (SVI) to characterize the posterior scales. Currently, only
 multi-variate Gaussian ansatz is supported. Note that the implementation of variational inference
 is stochastic variational inference, so VI and SVI are interchangeable. This is roughly equivalent to
-taking the Hessian of the log posterior at the MAP, however, in our experience, the Hessian can become unstable
-in high dimensions (i.e., very small eigenvalues). See Section 2.4 in <a class="reference external" href="https://arxiv.org/abs/2202.07663">our paper</a>.</p>
+taking the Hessian of the log posterior at the MAP. However, in our experience, the Hessian can become unstable
+in high dimensions (in cases of very small eigenvalues). See Section 2.4 in <a class="reference external" href="https://arxiv.org/abs/2202.07663">our paper</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -300,14 +303,14 @@ Convention is that <code class="docutils literal notranslate"><span class="pre">
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="simulation.html">
+          <a class="prev-page" href="profiles.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Lens Simulation</div>
+                <div class="title">Available Mass and Light Profiles</div>
                 
               </div>
             </a>

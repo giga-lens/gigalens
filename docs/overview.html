@@ -2,7 +2,7 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Model Specification" href="model-spec.html" /><link rel="prev" title="Welcome to GIGA-Lens’ documentation!" href="index.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Model Specification" href="model-spec.html" /><link rel="prev" title="Welcome to the GIGA-Lens documentation!" href="index.html" />
 
     <meta name="generator" content="sphinx-4.1.2, furo 2022.04.07"/>
         <title>Overview - GIGA-Lens documentation</title>
@@ -157,7 +157,10 @@
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model-spec.html">Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulation.html">Lens Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="simulation.html">Lens Simulation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html">Available Mass and Light Profiles</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="model-pipeline.html">Modelling Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bib.html">Bibliography and Acknowledgements</a></li>
 </ul>
@@ -199,17 +202,15 @@
 <p>This package provides two ‘substrates’ for modeling: modeling with TensorFlow and modeling with JAX.
 The benefits of modeling with TensorFlow include an easier setup (TensorFlow is fairly standard anywhere
 with access to GPUs), and a more mature implementation of algorithms such as variational
-inference and HMC in TensorFlow Probability (TFP). However, TensorFlow does not provide an easy
+inference and HMC in TensorFlow Probability (TFP). However, for non-neural network applications, TensorFlow does not provide an easy
 way to parallelize across multiple GPUs. JAX, on the other hand, natively supports multiple
 devices, and has experimental support in TFP. For beginners, we recommend starting with the
-TensorFlow implementation in <code class="docutils literal notranslate"><span class="pre">gigalens.tf</span></code> – however, for experienced users who may be willing experiment,
-<code class="docutils literal notranslate"><span class="pre">gigalens.jax</span></code> can be significantly faster than <code class="docutils literal notranslate"><span class="pre">gigalens.tf</span></code>.</p>
-<p>Although the two implementations are fundamentally identical, there are some small differences.
-The most significant is that the unconstraining bijector used in the JAX implementation is not
-able to fully flatten unconstrained parameters into a JAX array. This seems to be due to limited
-support for <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/substrates/jax/bijectors/Split" title="(in TensorFlow Probability v0.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfp.substrates.jax.bijectors.Split</span></code></a>, and this may be resolved in upcoming releases
-as the JAX substrate in TFP matures. For now, the flattening is done by hand in the JAX implementation.
-Similarly, the VI for JAX is implemented within the <code class="docutils literal notranslate"><span class="pre">gigalens</span></code> package, whereas in the TensorFlow implementation,
+TensorFlow substrate in <code class="docutils literal notranslate"><span class="pre">gigalens.tf</span></code> – however, for experienced users who may be willing experiment,
+<code class="docutils literal notranslate"><span class="pre">gigalens.jax</span></code> with multiple GPUs can be significantly faster than <code class="docutils literal notranslate"><span class="pre">gigalens.tf</span></code>.</p>
+<p>Although the two implementations are fundamentally identical, there are some small differences. While the flattening
+of the parameter vector is automatically done by TFP for the TF substrate, for now the
+flattening for the JAX substrate is done by hand (JAX may add this feature in the future, in which
+case, we will update our implementation). Similarly, we implement VI for JAX, whereas in the TensorFlow substrate,
 TFP already implements VI, so we use their built-in method (see <a class="reference external" href="https://www.tensorflow.org/probability/api_docs/python/tfp/vi/fit_surrogate_posterior" title="(in TensorFlow Probability v0.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">tfp.vi.fit_surrogate_posterior()</span></code></a>).</p>
 </div>
 </div>

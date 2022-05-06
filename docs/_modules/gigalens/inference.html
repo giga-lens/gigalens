@@ -157,7 +157,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model-spec.html">Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../simulation.html">Lens Simulation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../simulation.html">Lens Simulation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../profiles.html">Available Mass and Light Profiles</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../model-pipeline.html">Modelling Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../bib.html">Bibliography and Acknowledgements</a></li>
 </ul>
@@ -255,8 +258,8 @@
         <span class="sd">"""Runs stochastic variational inference (SVI) to characterize the posterior scales. Currently, only</span>
 <span class="sd">        multi-variate Gaussian ansatz is supported. Note that the implementation of variational inference</span>
 <span class="sd">        is stochastic variational inference, so VI and SVI are interchangeable. This is roughly equivalent to</span>
-<span class="sd">        taking the Hessian of the log posterior at the MAP, however, in our experience, the Hessian can become unstable</span>
-<span class="sd">        in high dimensions (i.e., very small eigenvalues). See Section 2.4 in `our paper &lt;https://arxiv.org/abs/2202.07663&gt;`__.</span>
+<span class="sd">        taking the Hessian of the log posterior at the MAP. However, in our experience, the Hessian can become unstable</span>
+<span class="sd">        in high dimensions (in cases of very small eigenvalues). See Section 2.4 in `our paper &lt;https://arxiv.org/abs/2202.07663&gt;`__.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            optimizer: An optimizer with which to minimize the ELBO loss. Adam or variants thereof are recommended,</span>
