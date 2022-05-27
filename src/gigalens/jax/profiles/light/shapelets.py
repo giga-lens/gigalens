@@ -42,15 +42,15 @@ class Shapelets(gigalens.profile.LightProfile):
                 n2 += 1
         N = jnp.arange(0, self.n_max + 1, dtype=jnp.float32)
         self.prefactor = 1. / jnp.sqrt(2 ** N * jnp.sqrt(float(jnp.pi)) * jnp.exp(jax.lax.lgamma(N + 1)))
-        self.depth = len(self._params)
+        self.depth = len(self._amp_names)
         self.herm_X = herm_X
         self.herm_Y = herm_Y
 
     @functools.partial(jit, static_argnums=(0,))
     def light(self, x, y, center_x, center_y, beta, **amp):
+        x = (x - center_x) / beta
+        y = (y - center_y) / beta
         if self.interpolate:
-            x = (x - center_x) / beta
-            y = (y - center_y) / beta
             ret = tfp.math.interp_regular_1d_grid(x, -5., 5., self.herm_X, fill_value_below=0., fill_value_above=0.)
             ret = ret * tfp.math.interp_regular_1d_grid(y, -5., 5., self.herm_Y, fill_value_below=0.,
                                                         fill_value_above=0.)
@@ -60,21 +60,19 @@ class Shapelets(gigalens.profile.LightProfile):
                 ret = jnp.einsum('i...j,ij->i...j', ret, jnp.stack([amp[x] for x in self._amp_names], axis=0))
                 return jnp.sum(ret, axis=0)
         else:
-            x = (x - center_x) / beta
-            y = (y - center_y) / beta
-            XX, YY = self.phi_n(x), self.phi_n(y)
+            z = jnp.stack([x,y], axis=0)
+
+            # Calculate phi_n
+            ret = jnp.ones((self.n_max + 1, *z.shape))
+            ret = ret.at[0].set(jnp.ones_like(z))
+            ret = ret.at[1].set(2 * z)
+            for n in range(2, self.n_max + 1):
+                ret = ret.at[n].set((2 * (z * ret[n - 1] - (n - 1) * ret[n - 2])))
+            ret = jnp.einsum('i,i...->i...', self.prefactor, ret)
+            XX, YY = ret[:,0,...], ret[:,1,...]
             fac = jnp.exp(-(x ** 2 + y ** 2) / 2)
             if self.use_lstsq:
                 return fac * XX[self.N1, ...] * YY[self.N2, ...]
             else:
                 return fac * jnp.einsum('ij,i...j->...j', jnp.stack([amp[x] for x in self._amp_names], axis=0),
                                         XX[self.N1, ...] * YY[self.N2, ...])
-
-    def phi_n(self, x):
-        ret = jnp.ones((self.n_max + 1, *x.shape))
-        ret = ret.at[0].set(jnp.ones_like(x))
-        ret = ret.at[1].set(2 * x)
-        for n in range(2, self.n_max + 1):
-            ret = ret.at[n].set((2 * (x * ret[n - 1] - (n - 1) * ret[n - 2])))
-
-        return jnp.einsum('i,i...->i...', self.prefactor, ret)

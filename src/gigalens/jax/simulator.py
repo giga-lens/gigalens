@@ -38,7 +38,8 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
 
         self.numPix = sim_config.num_pix
         self.bs = bs
-        self.depth = len(self.phys_model.lens_light) + len(self.phys_model.source_light)
+        self.depth = sum([x.depth for x in self.phys_model.lens_light]) + sum(
+            [x.depth for x in self.phys_model.source_light])
         self.kernel = None
         self.flat_kernel = None
 
@@ -113,28 +114,13 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             img = jnp.concatenate((img, lightModel.light(beta_x, beta_y, **p)), axis=0)
 
         img = jnp.nan_to_num(img)
-        img = jnp.transpose(img, (0, 3, 1, 2))
-        ret = (
-            jax.vmap(
-                lambda x: lax.conv(
-                    x[:, jnp.newaxis, ...], self.flat_kernel, (1, 1), "SAME"
-                )
-            )(img)
-            if self.flat_kernel is not None
-            else img
-        )
-        ret = (
-            jax.vmap(
-                lambda x: average_pool_2d(
-                    x, size=self.supersample, padding=ConvPadding.SAME
-                )
-            )(ret)
-            if self.supersample != 1
-            else ret
-        )
-        if self.flat_kernel is not None:
-            ret = jnp.squeeze(ret, axis=2)
-        ret = jnp.transpose(ret, (1, 2, 3, 0))
+        img = jnp.transpose(img, (3, 0, 1, 2))  # bs, n components, h, w
+        ret = jax.lax.conv_general_dilated(img, self.kernel, (1, 1), padding='SAME', feature_group_count=self.depth,
+                                           dimension_numbers=(
+                                           'NCHW', 'HWOI', 'NCHW')) if self.flat_kernel is not None else img
+        ret = average_pool_2d(ret, size=(self.supersample, self.supersample),
+                              padding="SAME") if self.supersample != 1 else ret
+        ret = jnp.transpose(ret, (0, 2, 3, 1))  # bs, h, w, n components
         if return_stacked:
             return ret
         W = (1 / err_map)[..., jnp.newaxis]

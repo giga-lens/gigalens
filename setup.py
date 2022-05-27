@@ -26,7 +26,7 @@ extras = {
 
 setup(
     name="gigalens",
-    version="0.1.2",
+    version="0.1.8",
     license="MIT",
     author="Andi Gu",
     author_email="andi.gu@berkeley.edu",
