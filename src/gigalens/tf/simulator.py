@@ -13,7 +13,6 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             phys_model: gigalens.model.PhysicalModel,
             sim_config: gigalens.simulator.SimulatorConfig,
             bs: int,
-            mask: Optional[Any] = None,
     ):
         super(LensSimulator, self).__init__(phys_model, sim_config, bs)
         self.supersample = int(sim_config.supersample)
@@ -45,7 +44,6 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         )
         self.kernel = None
         self.flat_kernel = None
-        
         if sim_config.kernel is not None:
             kernel = subgrid_kernel(
                 sim_config.kernel, sim_config.supersample, odd=True
@@ -55,8 +53,6 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
                 dtype=tf.float32,
             )
             self.flat_kernel = tf.constant(kernel, dtype=tf.float32)
-            
-        self.mask = tf.convert_to_tensor(self.mask)
 
     @tf.function
     def _beta(self, lens_params: List[Dict]):
@@ -98,11 +94,7 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             if self.supersample != 1
             else ret
         )
-        
-        final_img = tf.squeeze(ret) * self.conversion_factor
-        final_img = tf.math.multiply(final_img, self.mask)
-        
-        return final_img
+        return tf.squeeze(ret) * self.conversion_factor
 
     @tf.function
     def lstsq_simulate(
