@@ -20,6 +20,7 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             phys_model: gigalens.model.PhysicalModel,
             sim_config: gigalens.simulator.SimulatorConfig,
             bs: int,
+            mask = None,
     ):
         super(LensSimulator, self).__init__(phys_model, sim_config, bs)
         self.supersample = int(sim_config.supersample)
@@ -49,6 +50,8 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             )[::-1, ::-1, jnp.newaxis, jnp.newaxis]
             self.kernel = jnp.repeat(kernel, self.depth, axis=2)
             self.flat_kernel = jnp.transpose(kernel, (2, 3, 0, 1))
+            
+        self.mask = jnp.array(self.mask)
 
     @functools.partial(jit, static_argnums=(0,))
     def _beta(self, lens_params: List[Dict]):
@@ -86,8 +89,14 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             if self.supersample != 1
             else ret
         )
-        return jnp.squeeze(ret) * self.conversion_factor
+        
+        final_img = jnp.squeeze(ret) * self.conversion_factor
+        
+        if self.mask is not None:
+            final_img = jnp.multiply(final_img, self.mask)
 
+        return final_img
+        
     @functools.partial(jit, static_argnums=(0,))
     def lstsq_simulate(
             self,
@@ -131,4 +140,10 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         if return_coeffs:
             return coeffs
         ret = jnp.sum(ret * coeffs[:, jnp.newaxis, jnp.newaxis, :], axis=-1)
-        return jnp.squeeze(ret)
+        
+        final_img = jnp.squeeze(ret)
+        
+        if self.mask is not None:
+            final_img = jnp.multiply(final_img, self.mask)
+        
+        return final_img

@@ -39,6 +39,8 @@ class LensSimulatorInterface(ABC):
             model.
         sim_config (:obj:`~gigalens.simulator.SimulatorConfig`): Camera configuration settings
         bs (int): The number of lenses to simulate in parallel
+        mask (:obj:`numpy.array`, optional): Mask to be applied to simulated image - appropriate mask can ignore
+            fitting of regions in observed image.
     """
 
     def __init__(
@@ -46,10 +48,12 @@ class LensSimulatorInterface(ABC):
             phys_model: gigalens.model.PhysicalModel,
             sim_config: SimulatorConfig,
             bs: int,
+            mask: Optional[Any] = None,
     ):
         self.phys_model = phys_model
         self.sim_config = sim_config
         self.bs = bs
+        self.mask = mask
 
     @abstractmethod
     def simulate(
