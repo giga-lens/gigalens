@@ -29,6 +29,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
     ):
         dev_cnt = jax.device_count()
         n_samples = (n_samples // dev_cnt) * dev_cnt
+        print('DEV version!!!')
         lens_sim = sim.LensSimulator(
             self.phys_model,
             self.sim_config,
@@ -60,14 +61,16 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             updates, opt_state = optimizer.update(grads, opt_state)
             new_params = optax.apply_updates(params, updates)
             return chisq, new_params, opt_state
-
+        
+        chi2_hist = []
         with trange(num_steps) as pbar:
             for _ in pbar:
                 loss, params, opt_state = update(params, opt_state)
                 pbar.set_description(
                     f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True)):.3f}"
                 )
-        return params
+                chi2_hist.append(float(jnp.nanmin(loss)))
+        return params, chi2_hist
 
     def SVI(
             self,
