@@ -64,6 +64,10 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         lens_light_params, source_light_params = [], []
         if len(self.phys_model.lens_light) > 0:
             lens_light_params, source_light_params = params[1], params[2]
+
+            print('lens_light_params', lens_light_params)
+            print('source_light_params', source_light_params)
+        
         else:
             source_light_params = params[1]
         beta_x, beta_y = self._beta(lens_params)
