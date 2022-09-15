@@ -53,10 +53,15 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
     @functools.partial(jit, static_argnums=(0,))
     def _beta(self, lens_params: List[Dict]):
         beta_x, beta_y = self.img_X, self.img_Y
+        lens_i = 0
         for lens, p in zip(self.phys_model.lenses, lens_params):
+            print('beta for lens #{:d}'.format(lens_i))
+            print('lens', lens)
+            print('lens params', p)
+            lens_i += 1
             f_xi, f_yi = lens.deriv(self.img_X, self.img_Y, **p)
             beta_x, beta_y = beta_x - f_xi, beta_y - f_yi
-        return beta_x, beta_y
+        return beta_x, beta_y, f_xi, f_yi 
 
     @functools.partial(jit, static_argnums=(0,))
     def simulate(self, params, no_deflection=False):
@@ -67,7 +72,7 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
         
         else:
             source_light_params = params[1]
-        beta_x, beta_y = self._beta(lens_params)
+        beta_x, beta_y, f_xi, f_yi = self._beta(lens_params)
         if no_deflection:
             beta_x, beta_y = self.img_X, self.img_Y
         img = jnp.zeros_like(self.img_X)
@@ -105,7 +110,7 @@ class LensSimulator(gigalens.simulator.LensSimulatorInterface):
             lens_light_params, source_light_params = params[1], params[2]
         else:
             source_light_params = params[1]
-        beta_x, beta_y = self._beta(lens_params)
+        beta_x, beta_y, f_xi, f_yi = self._beta(lens_params)
         if no_deflection:
             beta_x, beta_y = self.img_X, self.img_Y
         img = jnp.zeros((0, *self.img_X.shape))
