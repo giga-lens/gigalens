@@ -33,6 +33,41 @@ class Sersic(gigalens.profile.LightProfile):
         return jnp.sqrt(xt1 ** 2 + xt2 ** 2)
 
 
+class Point(Sersic):
+    _name = "POINT"
+    _params = ["center_x", "center_y"]
+
+    '''
+    simulate a gaussian, return brigtest pixel
+    
+    I have not kept bn which was to ensure Ie is the high light brigtness.
+    Insteady I want Ie to be the brightest flux.
+    I use R_scale to basically make the light fall to zero quickly.
+    
+    I don't have a lstsq fit version of this yet.  See return statement for Sersic above.
+    
+    '''
+    @functools.partial(jit, static_argnums=(0,))
+    def light(self, x, y, center_x, center_y, Ie=None, R_sersic=None, n_sersic=None):
+        R = self.distance(x, y, center_x, center_y)
+#         R_scale = 0.002
+#         pix = Ie * jnp.exp(-(R / R_scale) ** 2 )
+        
+#         maxpix = jnp.max(pix)
+#         ret = jnp.array(maxpix)
+        
+#         # return ret[jnp.newaxis, ...] if self.use_lstsq else (Ie * ret)
+        n_fixed = 1000
+        R_fixed = 0.002
+        b_fixed = 1.9992 * n_fixed - 0.3271
+        ret = Ie * jnp.exp(-b_fixed * ((R / R_fixed) ** (1 / n_fixed) - 1.0))
+        # return ret[jnp.newaxis, ...] if self.use_lstsq else (Ie * ret)
+
+
+        return ret[jnp.newaxis, jnp.newaxis, jnp.newaxis, jnp.newaxis, ...]
+
+    
+
 class SersicEllipse(Sersic):
     _name = "SERSIC_ELLIPSE"
     _params = ["R_sersic", "n_sersic", "e1", "e2", "center_x", "center_y"]
