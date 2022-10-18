@@ -17,9 +17,15 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
             observed_image=None,
             background_rms=None,
             exp_time=None,
+            mask_image=None,
     ):
         super(ForwardProbModel, self).__init__(prior)
         self.observed_image = jnp.array(observed_image)
+        self.mask_image = mask_image
+        if self.mask_image is not None:
+            self.mask_image = jnp.array(mask_image)
+            self.observed_image = jnp.multiply(self.mask_image, self.observed_image)
+        
         self.background_rms = jnp.float32(background_rms)
         self.exp_time = jnp.float32(exp_time)
         example = prior.sample(seed=random.PRNGKey(0))
@@ -36,6 +42,10 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
         z = list(z.T)
         x = self.bij.forward(z)
         im_sim = simulator.simulate(x)
+        
+        if self.mask_image is not None:
+            im_sim = jnp.multiply(im_sim, self.mask_image)
+            
         err_map = jnp.sqrt(self.background_rms ** 2 + im_sim / self.exp_time)
         log_like = tfd.Independent(
             tfd.Normal(im_sim, err_map), reinterpreted_batch_ndims=2
@@ -48,7 +58,7 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
 
 class BackwardProbModel(gigalens.model.ProbabilisticModel):
     def __init__(
-            self, prior: tfd.Distribution, observed_image, background_rms, exp_time
+            self, prior: tfd.Distribution, observed_image, background_rms, exp_time,
     ):
         super(BackwardProbModel, self).__init__(prior)
         err_map = jnp.sqrt(
@@ -67,6 +77,8 @@ class BackwardProbModel(gigalens.model.ProbabilisticModel):
                 self.pack_bij,
             ]
         )
+        
+        print("Backward Model Called()")
 
     @functools.partial(jit, static_argnums=(0, 1))
     def log_prob(self, simulator: sim.LensSimulator, z):

@@ -26,6 +26,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             n_samples=500,
             num_steps=350,
             seed=0,
+            verbose = True,
     ):
         dev_cnt = jax.device_count()
         n_samples = (n_samples // dev_cnt) * dev_cnt
@@ -62,11 +63,17 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             return chisq, new_params, opt_state
 
         with trange(num_steps) as pbar:
+            map_loss = []
             for _ in pbar:
                 loss, params, opt_state = update(params, opt_state)
                 pbar.set_description(
                     f"Chi-squared: {float(jnp.nanmin(loss, keepdims=True)):.3f}"
                 )
+                map_loss.append(float(jnp.nanmin(loss, keepdims=True)))
+        
+        if verbose:
+            return params, map_loss
+        
         return params
 
     def SVI(
