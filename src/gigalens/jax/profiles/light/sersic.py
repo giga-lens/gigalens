@@ -57,8 +57,8 @@ class Point(Sersic):
 #         ret = jnp.array(maxpix)
         
 #         # return ret[jnp.newaxis, ...] if self.use_lstsq else (Ie * ret)
-        n_fixed = 100
-        R_fixed = 0.02
+        n_fixed = 0.165
+        R_fixed = 0.001
         b_fixed = 1.9992 * n_fixed - 0.3271
         ret = Ie * jnp.exp(-b_fixed * ((R / R_fixed) ** (1 / n_fixed) - 1.0))
         return ret[jnp.newaxis, ...] if self.use_lstsq else (Ie * ret)
