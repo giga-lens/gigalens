@@ -71,7 +71,8 @@ def initialize_default_prior(theta_E = 1.25):
 
 def plot_residual(observed_img,
                   best_fit,
-                  lens_sim, 
+                  lens_sim,
+                  prob_model,
                   mask_img = None, 
                   background_rms = 0.2, 
                   exp_time = 100,
@@ -80,10 +81,14 @@ def plot_residual(observed_img,
                   vmax = 20,
                   ):
     
+    observed_img = jnp.array(observed_img)
+    best = jnp.array(prob_model.bij.inverse(best_fit))
+    lp, chi2 = prob_model.log_prob(lens_sim, best)
+    
     if norm is None:
         norm = mpl.colors.PowerNorm(0.5, vmin=vmin, vmax=vmax)
         
-    fig, ax = plt.subplots(1, 4, figsize=(20, 4))
+    fig, ax = plt.subplots(1, 4, figsize=(22, 4))
     sim_img = jnp.array(lens_sim.simulate(best_fit))
     
     if mask_img is not None:
@@ -92,23 +97,28 @@ def plot_residual(observed_img,
     
     img0 = ax[0].imshow(observed_img, norm=norm,)
     img1 = ax[1].imshow(sim_img, norm=norm)
-    plt.colorbar(img0, ax = ax[0])
-    plt.colorbar(img1, ax = ax[1])
-    resid = sim_img - observed_img
+    plt.colorbar(img0, ax = ax[0], label = "Flux")
+    plt.colorbar(img1, ax = ax[1], label = "Flux")
+    resid = observed_img - sim_img
     err_map = jnp.sqrt(background_rms**2 + sim_img/exp_time)
-    img2 = ax[2].imshow(resid/err_map, cmap='coolwarm', interpolation='none', vmin=-5, vmax=5)
+    
+    final_diff = resid/err_map
+    
+    img2 = ax[2].imshow(final_diff, cmap='coolwarm', interpolation='none', vmin=-5, vmax=5)
     plt.colorbar(img2, ax = ax[2], label = r'$ \frac{f_{obs} - f_{sim}}{\sqrt{\mathrm{f_{sim}/exp} + \mathrm{bkg}^2}} $')
-    pull = resid/jnp.std(resid)
-    img3 = ax[3].imshow(pull, cmap='coolwarm', interpolation='none', vmin=-5, vmax=5)
-    plt.colorbar(img3, ax = ax[3], label = r'$ \frac{f_{obs} - f_{sim}}{\sigma} $')
+    ax[3].hist(final_diff.ravel(), label = f"$\chi^2 = {chi2:.3f}$", bins = 30)
+    
+    x_max = abs(max(ax[3].get_xlim(), key=abs))
+    ax[3].set_xlim(xmin=-x_max, xmax=x_max)
 
 
     ax[0].set_title("Observed Image")
     ax[1].set_title("Simulated Image")
-    ax[2].set_title("Errormap Residual")
-    ax[3].set_title("Difference Residual (Pull)")
-    
-    return fig, ax
+    ax[2].set_title("Errormap Normalized Residual")
+    ax[3].set_title("Histogram of Normalized Residual (Data - Model)")
+    plt.legend()
+    print("Chi-Squared: {0:.5f}".format(chi2))
+    return fig, ax, chi2
     
 def get_med_solution(prob_model, samples):
     """Only works for EPL + Shear Currently."""
@@ -319,8 +329,8 @@ def ellip_mask_xy(x, y, a, b, num_pix, theta):
     # Setup arrays which just list the x and y coordinates
     x_grid, y_grid = jnp.meshgrid(x, y)
     
-    xgrid = (x_grid - x_center) * jnp.cos(theta) + (y_grid - y_center) * jnp.sin(theta)
-    ygrid = -(x_grid - x_center) * jnp.sin(theta) + (y_grid - y_center) * jnp.cos(theta) 
+    xgrid = (x_grid - x) * jnp.cos(theta) + (y_grid - y) * jnp.sin(theta)
+    ygrid = -(x_grid - x) * jnp.sin(theta) + (y_grid - y) * jnp.cos(theta) 
 
     # Calculate the ellipse values all at once
     ellipse = (xgrid) **2 / a**2 + (ygrid) **2 / b**2
@@ -342,4 +352,43 @@ def square_mask(x_low, x_high, y_low, y_high, num_pix):
     
     return mask_img
     
-    
+
+def print_values(best_fit):
+    mass, lens, source = best_fit
+
+    for count, param_set in enumerate(mass):
+        print("Mass Parameters", count + 1)
+        for param in param_set:
+            print(param, ":",  param_set[param])
+        print()
+
+    for count, param_set in enumerate(lens):
+        print("Lens Parameters", count + 1)
+        for param in param_set:
+            print(param, ":",  param_set[param])
+        print()
+
+    for count, param_set in enumerate(source):
+        print("Source Parameters", count + 1)
+        for param in param_set:
+            print(param, ":",  param_set[param])
+        print()
+        
+    return None
+
+def switch_best_to_np(best_fit):
+    mass, lens, source = best_fit
+
+    for count, param_set in enumerate(mass):
+        for param in param_set:
+            mass[count][param] = np.array(mass[count][param])
+
+    for count, param_set in enumerate(lens):
+        for param in param_set:
+            lens[count][param] = np.array(lens[count][param])
+
+    for count, param_set in enumerate(source):
+        for param in param_set:
+            source[count][param] = np.array(source[count][param])
+        
+    return [mass, lens, source]

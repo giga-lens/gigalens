@@ -51,9 +51,17 @@ class ForwardProbModel(gigalens.model.ProbabilisticModel):
             tfd.Normal(im_sim, err_map), reinterpreted_batch_ndims=2
         ).log_prob(self.observed_image)
         log_prior = self.prior.log_prob(x) + self.bij.forward_log_det_jacobian(z)
-        return log_like + log_prior, jnp.mean(
-            ((im_sim - self.observed_image) / err_map) ** 2, axis=(-2, -1)
-        )
+        
+        if self.mask_image is not None:
+            chi2 = jnp.sum(
+                ((im_sim - self.observed_image) / err_map) ** 2, axis=(-2, -1)
+            ) / jnp.sum(self.mask_image)
+        else:  
+            chi2 = jnp.mean(
+                ((im_sim - self.observed_image) / err_map) ** 2, axis=(-2, -1)
+            )
+        
+        return log_like + log_prior, chi2
 
 
 class BackwardProbModel(gigalens.model.ProbabilisticModel):
