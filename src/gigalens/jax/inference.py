@@ -37,6 +37,7 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             n_samples=500,
             num_steps=350,
             seed=0,
+            return_full_history=False,
     ):
         dev_cnt = len(jax.devices())
         n_samples = (n_samples // dev_cnt) * dev_cnt
@@ -73,6 +74,8 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
             return lps, chisq, new_params, opt_state
 
         chisq_hist = []
+        lps_hist = []
+        params_hist = []
         with trange(num_steps) as pbar:
             for _ in pbar:
                 lps, chisq, params, opt_state = update(params, opt_state)
@@ -81,9 +84,22 @@ class ModellingSequence(gigalens.inference.ModellingSequenceInterface):
                     f"Chi-squared: {float(jnp.nanmin(chisq)):.3f}"
                 )
                 chisq_hist.append(min_chisq)
+                lps_hist.append(lps)
+                params_hist.append(params)
+        
+        chisq_hist = jnp.array(chisq_hist)
+        lps_hist = jnp.array(lps_hist)
+        params_hist = jnp.array(params_hist)
 
-        best = params[jnp.nanargmax(lps)][jnp.newaxis,:] #* Pick out best sample in last step
-        return best, chisq_hist
+        if return_full_history:
+            min_chisq_hist = jnp.nanmin(chisq_hist, axis=1)
+            return params_hist, min_chisq_hist
+        else:
+            map_loss_min = jnp.nanmin(lps_hist, axis=1)
+            best_step_idx = jnp.nanargmin(map_loss_min)
+            best_sample_idx = jnp.nanargmin(lps_hist[best_step_idx])
+            best = params[best_step_idx, best_sample_idx][jnp.newaxis,:] #* Pick out best sample
+            return best, chisq_hist
 
 
     
