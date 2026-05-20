@@ -6,6 +6,9 @@ import numpy as np
 import gigalens.model
 import gigalens.simulator
 
+import warnings
+warnings.warn("The master branch of gigalens will soon update to version 2.0. \nConsider updating to v2.0, or using the single-node branch or the 1.0 release")
+
 
 class ModellingSequenceInterface(ABC):
     """Defines the three steps in modelling:
